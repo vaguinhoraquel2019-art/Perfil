@@ -17,7 +17,7 @@ const ADMIN_DATA = {
   credentials: [
     { user: "Wagner",   password: "757894nlw",  role: "owner"  },
     { user: "Arthur",   password: "757894nlw",    role: "ceo"    },
-    { user: "Senior1",  password: "senior789", role: "senior" },
+    { user: "Senior1",  password: "757894nlw", role: "senior" },
   ],
 
   // ── Permissões por cargo ──────────────────────────────────
