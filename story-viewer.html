@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Story</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      background: #000;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      overflow: hidden;
+      color: #fff;
+      touch-action: manipulation;
+    }
+
+    /* ══ VIEWER ══ */
+    #viewer {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Barra de progresso */
+    #progress-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: rgba(255,255,255,0.25);
+      z-index: 30;
+    }
+
+    #progress-fill {
+      height: 100%;
+      background: #fff;
+      width: 0%;
+      transition: width linear;
+    }
+
+    /* Header */
+    #viewer-header {
+      position: absolute;
+      top: 10px;
+      left: 0;
+      right: 0;
+      padding: 10px 16px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 20;
+    }
+
+    #viewer-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #fff;
+      flex-shrink: 0;
+    }
+
+    #viewer-username {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+      flex: 1;
+    }
+
+    #viewer-time {
+      font-size: 11px;
+      color: rgba(255,255,255,0.65);
+    }
+
+    #btn-close {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.4);
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    /* Imagem do story */
+    #story-img-wrap {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #story-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Textos sobrepostos */
+    #viewer-texts {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .viewer-text-el {
+      position: absolute;
+      color: #fff;
+      font-size: 22px;
+      font-weight: 700;
+      text-shadow: 0 1px 6px rgba(0,0,0,0.7);
+      white-space: nowrap;
+      transform: translate(-50%, -50%);
+      font-family: inherit;
+      letter-spacing: -0.01em;
+      pointer-events: none;
+    }
+
+    /* Indicador de música */
+    #music-bar {
+      position: absolute;
+      bottom: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 24px;
+      padding: 8px 16px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      z-index: 20;
+      max-width: calc(100% - 40px);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    #music-bar:hover { background: rgba(0,0,0,0.75); }
+
+    #music-note {
+      font-size: 16px;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.5; }
+    }
+
+    #music-text {
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 200px;
+    }
+
+    /* Áreas de toque prev/next */
+    #touch-prev, #touch-next {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 35%;
+      z-index: 15;
+      cursor: pointer;
+    }
+    #touch-prev { left: 0; }
+    #touch-next { right: 0; }
+
+    /* Sem stories */
+    #empty-state {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      background: #0a0c14;
+    }
+
+    #empty-state .icon { font-size: 44px; }
+    #empty-state p { font-size: 15px; color: rgba(255,255,255,0.5); }
+    #empty-state button {
+      padding: 11px 24px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 13px;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+<div id="viewer">
+
+  <!-- Progresso -->
+  <div id="progress-bar"><div id="progress-fill"></div></div>
+
+  <!-- Header -->
+  <div id="viewer-header">
+    <img id="viewer-avatar" src="" alt="" />
+    <div>
+      <div id="viewer-username"></div>
+      <div id="viewer-time"></div>
+    </div>
+    <button id="btn-close" onclick="fecharViewer()">✕</button>
+  </div>
+
+  <!-- Imagem -->
+  <div id="story-img-wrap">
+    <img id="story-img" src="" alt="" />
+    <div id="viewer-texts"></div>
+  </div>
+
+  <!-- Música -->
+  <div id="music-bar" onclick="abrirMusica()">
+    <span id="music-note">♫</span>
+    <span id="music-text">Ouvir música</span>
+    <span style="font-size:10px;color:rgba(255,255,255,0.5);margin-left:4px">↗</span>
+  </div>
+
+  <!-- Toque para navegar -->
+  <div id="touch-prev" onclick="prevStory()"></div>
+  <div id="touch-next" onclick="nextStory()"></div>
+
+  <!-- Sem stories -->
+  <div id="empty-state">
+    <div class="icon">🌑</div>
+    <p>Nenhum story disponível.</p>
+    <button onclick="fecharViewer()">← Voltar</button>
+  </div>
+
+</div>
+
+<script src="admin-data.js"></script>
+<script>
+  const FILTERS = {
+    none:          "none",
+    lores:         "contrast(1.3) saturate(0.6) brightness(0.9)",
+    handheld:      "blur(1.2px) brightness(1.05) contrast(0.95)",
+    riodejaneiro:  "hue-rotate(220deg) saturate(1.4) brightness(1.1)",
+    softlight:     "brightness(1.15) contrast(0.85) saturate(1.1)",
+    zoomblur:      "blur(2px) saturate(1.5) contrast(1.2)",
+    hyper:         "saturate(2) contrast(1.3) brightness(1.05)",
+    graphite:      "grayscale(1) contrast(1.1) brightness(0.95)",
+  };
+
+  let stories     = [];
+  let currentIdx  = 0;
+  let timerHandle = null;
+  const DEFAULT_DURATION = 10000; // 10 segundos padrão
+
+  // ── Lê parâmetros ──
+  const params   = new URLSearchParams(window.location.search);
+  const username = params.get("username") || params.get("u") || "";
+  const returnTo = params.get("return")   || "index.html";
+
+  window.addEventListener("DOMContentLoaded", () => {
+    if (!username) { showEmpty(); return; }
+
+    // Recarrega stories do localStorage (dados mais recentes)
+    try {
+      const saved = localStorage.getItem("paradise_admin_data");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.stories) ADMIN_DATA.stories = parsed.stories;
+        if (parsed.profiles) ADMIN_DATA.profiles = parsed.profiles;
+        if (parsed.user_accounts) ADMIN_DATA.user_accounts = parsed.user_accounts;
+      }
+    } catch(e) {}
+
+    // Tenta encontrar stories com variações do username
+    const norm = s => (s||"").toLowerCase().replace(/^@/,"").trim();
+    stories = (ADMIN_DATA.stories || []).filter(s => {
+      const expires = s.expiresAt > Date.now();
+      return expires && (
+        norm(s.username) === norm(username) ||
+        norm(s.profileId) === norm(username)
+      );
+    });
+
+    if (!stories.length) { showEmpty(); return; }
+    // Preenche avatar e nome
+    const account = ADMIN_DATA.user_accounts.find(a => a.username === username);
+    const profile = ADMIN_DATA.profiles.find(p =>
+      p.id === username || p.username === username ||
+      (account && (p.id === account.profileId || p.username === account.profileId))
+    );
+    const avatarSrc = (profile && profile.data && profile.data.avatar) || "";
+    document.getElementById("viewer-avatar").src = avatarSrc;
+    document.getElementById("viewer-username").textContent = "@" + username;
+    showStory(0);
+  });
+
+  function showStory(idx) {
+    clearTimer();
+    if (idx < 0 || idx >= stories.length) { fecharViewer(); return; }
+    currentIdx = idx;
+    const s = stories[idx];
+    const DURATION = s.duration || DEFAULT_DURATION; // usa duração do story ou padrão
+
+    // Imagem + filtro
+    const img = document.getElementById("story-img");
+    img.src = s.imageData || "";
+    img.style.filter = FILTERS[s.filter] || "none";
+
+    // Textos
+    const textsEl = document.getElementById("viewer-texts");
+    textsEl.innerHTML = "";
+    (s.texts || []).forEach(t => {
+      const el = document.createElement("div");
+      el.className   = "viewer-text-el";
+      el.textContent = t.text;
+      el.style.left  = t.x + "%";
+      el.style.top   = t.y + "%";
+      textsEl.appendChild(el);
+    });
+
+    // Música
+    const musicBar = document.getElementById("music-bar");
+    stopStoryMusic(); // para música anterior se houver
+
+    if (s.music) {
+      const musicName = s.musicName || extrairNomeMusica(s.music);
+      document.getElementById("music-text").textContent = musicName;
+      musicBar.style.display = "flex";
+      // Toca automaticamente
+      playStoryMusic(s.music);
+    } else {
+      musicBar.style.display = "none";
+    }
+
+    // Horário
+    document.getElementById("viewer-time").textContent = formatTimeAgo(s.createdAt);
+
+    // Progresso
+    const fill = document.getElementById("progress-fill");
+    fill.style.transition = "none";
+    fill.style.width = "0%";
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        fill.style.transition = `width ${DURATION}ms linear`;
+        fill.style.width = "100%";
+      });
+    });
+
+    // Auto-avançar
+    timerHandle = setTimeout(() => nextStory(), DURATION);
+  }
+
+  function nextStory() {
+    if (currentIdx + 1 >= stories.length) fecharViewer();
+    else showStory(currentIdx + 1);
+  }
+
+  function prevStory() {
+    if (currentIdx > 0) showStory(currentIdx - 1);
+  }
+
+  function clearTimer() {
+    clearTimeout(timerHandle);
+    timerHandle = null;
+  }
+
+  function fecharViewer() {
+    clearTimer();
+    stopStoryMusic();
+    window.location.href = returnTo;
+  }
+
+  function abrirMusica() {
+    const s = stories[currentIdx];
+    if (!s || !s.music) return;
+    clearTimer();
+    window.open(s.music, "_blank", "noopener");
+    setTimeout(() => {
+      timerHandle = setTimeout(() => nextStory(), DURATION);
+    }, 3000);
+  }
+
+  // ── Player de música do story ──
+  let storyYTPlayer  = null;
+  let storyYTReady   = false;
+  let storyAudio     = null;
+  let currentMusicUrl = "";
+
+  function playStoryMusic(url) {
+    if (!url || url === currentMusicUrl) return;
+    stopStoryMusic();
+    currentMusicUrl = url;
+
+    const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/);
+
+    if (ytMatch) {
+      // YouTube IFrame API
+      loadYTAPI(() => {
+        let container = document.getElementById("yt-story-container");
+        if (!container) {
+          container = document.createElement("div");
+          container.id = "yt-story-container";
+          container.style.cssText = "position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;bottom:0;left:0;z-index:-1";
+          document.body.appendChild(container);
+        }
+        container.innerHTML = '<div id="yt-story-player"></div>';
+
+        storyYTPlayer = new YT.Player("yt-story-player", {
+          videoId: ytMatch[1],
+          playerVars: { autoplay: 1, controls: 0, disablekb: 1, fs: 0, rel: 0 },
+          events: {
+            onReady: e => { storyYTReady = true; e.target.setVolume(80); e.target.playVideo(); },
+          }
+        });
+      });
+    } else if (url && !/spotify\.com|soundcloud\.com/i.test(url)) {
+      // MP3 direto
+      storyAudio = new Audio(url);
+      storyAudio.volume = 0.8;
+      storyAudio.play().catch(() => {});
+    }
+  }
+
+  function stopStoryMusic() {
+    currentMusicUrl = "";
+    if (storyYTPlayer) {
+      try { storyYTPlayer.stopVideo(); storyYTPlayer.destroy(); } catch(e) {}
+      storyYTPlayer = null; storyYTReady = false;
+    }
+    if (storyAudio) {
+      storyAudio.pause();
+      storyAudio.src = "";
+      storyAudio = null;
+    }
+    const c = document.getElementById("yt-story-container");
+    if (c) c.innerHTML = "";
+  }
+
+  function loadYTAPI(cb) {
+    if (window.YT && window.YT.Player) { cb(); return; }
+    window._storyYTCb = cb;
+    if (document.getElementById("yt-api-story")) return;
+    const tag = document.createElement("script");
+    tag.id  = "yt-api-story";
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(tag);
+  }
+
+  window.onYouTubeIframeAPIReady = function() {
+    if (window._storyYTCb) { window._storyYTCb(); window._storyYTCb = null; }
+  };
+
+  function extrairNomeMusica(url) {
+    if (!url) return "♫ música";
+    const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/);
+    if (ytMatch) return "♫ YouTube";
+    try {
+      const decoded = decodeURIComponent(url.split("/").pop().split("?")[0]);
+      return decoded.replace(/\.\w+$/, "").slice(0, 30) || "♫ música";
+    } catch(e) { return "♫ música"; }
+  }
+
+  function showEmpty() {
+    document.getElementById("empty-state").style.display    = "flex";
+    document.getElementById("viewer-header").style.display  = "none";
+    document.getElementById("story-img-wrap").style.display = "none";
+    document.getElementById("progress-bar").style.display   = "none";
+  }
+
+  function formatTimeAgo(ts) {
+    const diff = Math.floor((Date.now() - ts) / 1000);
+    if (diff < 60)   return "agora mesmo";
+    if (diff < 3600) return Math.floor(diff / 60) + "min atrás";
+    if (diff < 86400) return Math.floor(diff / 3600) + "h atrás";
+    return Math.floor(diff / 86400) + "d atrás";
+  }
+</script>
+</body>
+</html>

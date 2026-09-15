@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>⚙️ Paradise Admin</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="js/protect.js"></script>
+  <link rel="stylesheet" href="painel.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ LOGIN ═══════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">⚙️</div>
+    <h1 class="login-title">Paradise Admin</h1>
+    <p class="login-sub">Acesso restrito — identifique-se</p>
+
+    <div class="login-form">
+      <div class="lf-field">
+        <label>Usuário</label>
+        <input type="text" id="login-user" placeholder="Seu usuário" autocomplete="off" />
+      </div>
+      <div class="lf-field">
+        <label>Senha</label>
+        <input type="password" id="login-pass" placeholder="••••••••" />
+      </div>
+      <div id="login-error" class="login-error hidden" style="display:none">Usuário ou senha incorretos.</div>
+      <button class="btn-login" onclick="doLogin()">Entrar</button>
+      <button onclick="limparCache()" style="margin-top:10px;width:100%;background:none;border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.35);font-size:11px;padding:8px;border-radius:8px;cursor:pointer;">🔄 Limpar cache e tentar novamente</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ PAINEL ══════════════════════════════════ -->
+<div id="panel" class="hidden" style="display:none">
+
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-logo">⚙️</span>
+      <div>
+        <div class="sidebar-title">Paradise Admin</div>
+        <div id="sidebar-role" class="sidebar-role"></div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-btn active" data-page="dashboard" onclick="goPage('dashboard')">
+        <span class="nav-icon">📊</span> Dashboard
+      </button>
+      <button class="nav-btn" data-page="users" onclick="goPage('users')">
+        <span class="nav-icon">👥</span> Usuários
+      </button>
+      <button class="nav-btn" data-page="suspensions" onclick="goPage('suspensions')">
+        <span class="nav-icon">🚫</span> Suspensões
+      </button>
+      <button class="nav-btn" id="nav-admins" data-page="admins" onclick="goPage('admins')">
+        <span class="nav-icon">🔑</span> Administradores
+      </button>
+      <button class="nav-btn" id="nav-store" data-page="store" onclick="goPage('store')">
+        <span class="nav-icon">🛒</span> Loja / Produtos
+      </button>
+      <button class="nav-btn" id="nav-orders" data-page="orders" onclick="goPage('orders')">
+        <span class="nav-icon">🕐</span> Pendentes
+        <span id="orders-badge" class="nav-badge" style="display:none">0</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div id="sidebar-username" class="sidebar-username"></div>
+      <button class="btn-logout" onclick="doLogout()">Sair</button>
+    </div>
+  </aside>
+
+  <!-- Conteúdo principal -->
+  <main id="main-content">
+
+    <!-- ── DASHBOARD ── -->
+    <div id="page-dashboard" class="page active">
+      <div class="page-header">
+        <h2>Dashboard</h2>
+        <span class="page-sub">Visão geral do sistema</span>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-info">
+            <div class="stat-num" id="stat-total">0</div>
+            <div class="stat-label">Perfis criados</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🚫</div>
+          <div class="stat-info">
+            <div class="stat-num" id="stat-suspended">0</div>
+            <div class="stat-label">Suspensos</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-info">
+            <div class="stat-num" id="stat-active">0</div>
+            <div class="stat-label">Ativos</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🔑</div>
+          <div class="stat-info">
+            <div class="stat-num" id="stat-admins">0</div>
+            <div class="stat-label">Administradores</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">Perfis recentes</div>
+      <div id="recent-users" class="users-list"></div>
+    </div>
+
+    <!-- ── USUÁRIOS ── -->
+    <div id="page-users" class="page">
+      <div class="page-header">
+        <h2>Usuários</h2>
+        <span class="page-sub">Gerencie todos os perfis criados</span>
+      </div>
+
+      <div class="toolbar">
+        <input type="text" id="search-users" class="search-input" placeholder="🔍 Buscar por nome ou usuário..." oninput="renderUsers()" />
+        <div class="toolbar-right">
+          <span id="users-count" class="count-badge">0 perfis</span>
+        </div>
+      </div>
+
+      <div id="users-list" class="users-list"></div>
+      <div id="users-empty" class="empty-state hidden">
+        <div class="empty-icon">👥</div>
+        <p>Nenhum perfil encontrado.</p>
+        <span>Quando alguém criar um perfil, ele aparecerá aqui.</span>
+      </div>
+    </div>
+
+    <!-- ── SUSPENSÕES ── -->
+    <div id="page-suspensions" class="page">
+      <div class="page-header">
+        <h2>Suspensões</h2>
+        <span class="page-sub">Perfis suspensos ou com castigo ativo</span>
+      </div>
+      <div id="suspensions-list" class="users-list"></div>
+      <div id="suspensions-empty" class="empty-state hidden">
+        <div class="empty-icon">✅</div>
+        <p>Nenhuma suspensão ativa.</p>
+      </div>
+    </div>
+
+    <!-- ── ADMINISTRADORES ── -->
+    <div id="page-admins" class="page">
+      <div class="page-header">
+        <h2>Administradores</h2>
+        <span class="page-sub">Gerencie os acessos ao painel</span>
+      </div>
+
+      <div id="admins-add-section">
+        <div class="section-title">Adicionar administrador</div>
+        <div class="add-admin-form">
+          <input type="text"     id="new-admin-user" class="form-input" placeholder="Usuário" />
+          <input type="password" id="new-admin-pass" class="form-input" placeholder="Senha" />
+          <select id="new-admin-role" class="form-select">
+            <option value="senior">Senior</option>
+            <option value="ceo">CEO</option>
+            <option value="owner">Owner</option>
+          </select>
+          <button class="btn-action green" onclick="addAdmin()">Adicionar</button>
+        </div>
+      </div>
+
+      <div class="section-title" style="margin-top:24px">Lista de administradores</div>
+      <div id="admins-list" class="users-list"></div>
+    </div>
+
+    <!-- ── LOJA / PRODUTOS ── -->
+    <div id="page-store" class="page">
+      <div class="page-header">
+        <h2>🛒 Loja / Produtos</h2>
+        <span class="page-sub">Gerencie categorias e produtos da loja</span>
+      </div>
+
+      <!-- Sub-abas -->
+      <div class="store-tabs">
+        <button class="store-tab active" id="stab-cats"  onclick="goStoreTab('cats')">📂 Categorias</button>
+        <button class="store-tab"        id="stab-prods" onclick="goStoreTab('prods')">🛍️ Produtos</button>
+      </div>
+
+      <!-- ══ SUB-ABA: CATEGORIAS ══ -->
+      <div id="store-cats" class="store-tab-content active">
+
+        <div id="store-manage-section">
+          <div class="section-title">Nova categoria</div>
+          <div class="add-product-form" style="grid-template-columns:1fr 1fr 80px">
+            <input type="text" id="cat-name" class="form-input" placeholder="Nome da categoria *" />
+            <input type="text" id="cat-icon" class="form-input" placeholder="Ícone/emoji (ex: 🎵)" />
+            <button class="btn-action green" onclick="addCategory()" style="white-space:nowrap">➕ Criar</button>
+          </div>
+          <div class="mf" style="margin-top:8px">
+            <input type="text" id="cat-desc" class="form-input" placeholder="Descrição da categoria (o que ela libera no perfil)" style="width:100%" />
+          </div>
+        </div>
+
+        <div class="section-title" style="margin-top:24px">Categorias cadastradas</div>
+        <div id="categories-list" class="users-list"></div>
+        <div id="categories-empty" class="empty-state hidden">
+          <div class="empty-icon">📂</div>
+          <p>Nenhuma categoria ainda.</p>
+        </div>
+      </div>
+
+      <!-- ══ SUB-ABA: PRODUTOS ══ -->
+      <div id="store-prods" class="store-tab-content">
+
+        <div id="store-prod-manage-section">
+          <div class="section-title">Novo produto</div>
+          <div class="add-product-form">
+            <input type="text"   id="prod-name"  class="form-input" placeholder="Nome do produto *" />
+            <input type="number" id="prod-price" class="form-input" placeholder="Preço (R$) *" min="0" step="0.01" />
+            <select id="prod-categoryId" class="form-select">
+              <option value="">Selecione a categoria *</option>
+            </select>
+            <input type="url"  id="prod-photo"   class="form-input" placeholder="URL da foto do produto" />
+            <input type="text" id="prod-feature" class="form-input" placeholder="Feature liberada (ex: music_slot)" />
+            <select id="prod-active" class="form-select">
+              <option value="1">✅ Ativo</option>
+              <option value="0">⏸️ Inativo</option>
+            </select>
+          </div>
+          <div class="mf" style="margin-top:8px;display:flex;gap:8px;align-items:flex-end">
+            <input type="text" id="prod-desc" class="form-input" placeholder="Descrição do produto" style="flex:1" />
+            <button class="btn-action green" onclick="addProduct()">➕ Adicionar produto</button>
+          </div>
+        </div>
+
+        <!-- Filtro por categoria -->
+        <div style="display:flex;align-items:center;gap:10px;margin-top:24px;flex-wrap:wrap">
+          <span class="section-title" style="margin:0">Produtos</span>
+          <select id="filter-cat-prod" class="form-select" style="max-width:220px" onchange="renderStore()">
+            <option value="">Todas as categorias</option>
+          </select>
+        </div>
+
+        <div id="products-list" class="users-list" style="margin-top:12px"></div>
+        <div id="products-empty" class="empty-state hidden">
+          <div class="empty-icon">🛍️</div>
+          <p>Nenhum produto cadastrado ainda.</p>
+          <span>Crie uma categoria primeiro, depois adicione produtos.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PEDIDOS PENDENTES ── -->
+    <div id="page-orders" class="page">
+      <div class="page-header">
+        <h2>🕐 Pedidos Pendentes</h2>
+        <span class="page-sub">Compras aguardando aprovação</span>
+      </div>
+      <div class="toolbar">
+        <div style="display:flex;gap:8px">
+          <button class="btn-action blue"   onclick="filterOrders('pending')"  id="filter-pending"  style="opacity:1">🕐 Pendentes</button>
+          <button class="btn-action green"  onclick="filterOrders('approved')" id="filter-approved" style="opacity:0.5">✅ Aprovados</button>
+          <button class="btn-action red"    onclick="filterOrders('rejected')" id="filter-rejected" style="opacity:0.5">❌ Recusados</button>
+          <button class="btn-action gray"   onclick="filterOrders('all')"      id="filter-all"      style="opacity:0.5">📋 Todos</button>
+        </div>
+      </div>
+      <div id="orders-list" class="users-list" style="margin-top:16px"></div>
+      <div id="orders-empty" class="empty-state hidden">
+        <div class="empty-icon">🕐</div>
+        <p>Nenhum pedido encontrado.</p>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ═══════════════════════ MODAL EDITAR CATEGORIA ═══════════════════════ -->
+<div id="modal-cat-edit" class="modal hidden" style="display:none">
+  <div class="modal-box modal-box-sm">
+    <div class="modal-header">
+      <h3>✏️ Editar Categoria</h3>
+      <button class="modal-close" onclick="closeModal('modal-cat-edit')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="cedit-id" />
+      <div class="modal-grid">
+        <div class="mf"><label>Nome</label><input type="text" id="cedit-name" /></div>
+        <div class="mf"><label>Ícone/emoji</label><input type="text" id="cedit-icon" placeholder="🎵" /></div>
+        <div class="mf" style="grid-column:1/-1"><label>Descrição</label><input type="text" id="cedit-desc" /></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-action gray"  onclick="closeModal('modal-cat-edit')">Cancelar</button>
+      <button class="btn-action green" onclick="saveCatEdit()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ MODAL EDITAR PRODUTO ═══════════════════════ -->
+<div id="modal-prod-edit" class="modal hidden" style="display:none">
+  <div class="modal-box modal-box-sm">
+    <div class="modal-header">
+      <h3>✏️ Editar Produto</h3>
+      <button class="modal-close" onclick="closeModal('modal-prod-edit')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="pedit-id" />
+      <div class="modal-grid">
+        <div class="mf"><label>Nome</label><input type="text" id="pedit-name" /></div>
+        <div class="mf"><label>Preço (R$)</label><input type="number" id="pedit-price" min="0" step="0.01" /></div>
+        <div class="mf"><label>Categoria</label>
+          <select id="pedit-categoryId" class="form-select">
+            <option value="">Sem categoria</option>
+          </select>
+        </div>
+        <div class="mf"><label>Feature liberada</label><input type="text" id="pedit-feature" /></div>
+        <div class="mf"><label>Foto (URL)</label><input type="url" id="pedit-photo" /></div>
+        <div class="mf"><label>Status</label>
+          <select id="pedit-active" class="form-select">
+            <option value="1">✅ Ativo</option>
+            <option value="0">⏸️ Inativo</option>
+          </select>
+        </div>
+        <div class="mf" style="grid-column:1/-1"><label>Descrição</label><input type="text" id="pedit-desc" /></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-action gray"  onclick="closeModal('modal-prod-edit')">Cancelar</button>
+      <button class="btn-action green" onclick="saveProdEdit()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ MODAL EDITAR PERFIL ═══════════════════════ -->
+<div id="modal-edit" class="modal hidden" style="display:none">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>✏️ Editar Perfil</h3>
+      <button class="modal-close" onclick="closeModal('modal-edit')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-id" />
+      <div class="modal-grid">
+        <div class="mf"><label>Nome</label><input type="text" id="edit-name" /></div>
+        <div class="mf"><label>Usuário</label><input type="text" id="edit-username" /></div>
+        <div class="mf"><label>Descrição</label><input type="text" id="edit-desc" /></div>
+        <div class="mf"><label>Status</label><input type="text" id="edit-status" /></div>
+        <div class="mf"><label>Localização</label><input type="text" id="edit-location" /></div>
+        <div class="mf"><label>Avatar URL</label><input type="url" id="edit-avatar" /></div>
+        <div class="mf"><label>Fundo URL</label><input type="url" id="edit-mainbg" /></div>
+        <div class="mf"><label>Spotify</label><input type="url" id="edit-spotify" /></div>
+        <div class="mf"><label>Instagram</label><input type="url" id="edit-instagram" /></div>
+        <div class="mf"><label>TikTok</label><input type="url" id="edit-tiktok" /></div>
+        <div class="mf"><label>YouTube</label><input type="url" id="edit-youtube" /></div>
+        <div class="mf"><label>Música URL (.mp3)</label><input type="url" id="edit-audio" /></div>
+        <div class="mf"><label>Nome da música</label><input type="text" id="edit-audioTitle" /></div>
+        <div class="mf"><label>Artista</label><input type="text" id="edit-audioArtist" /></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-action gray" onclick="closeModal('modal-edit')">Cancelar</button>
+      <button class="btn-action green" onclick="saveEdit()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ MODAL SUSPENDER ═══════════════════════ -->
+<div id="modal-suspend" class="modal hidden" style="display:none">
+  <div class="modal-box modal-box-sm">
+    <div class="modal-header">
+      <h3>🚫 Aplicar Castigo</h3>
+      <button class="modal-close" onclick="closeModal('modal-suspend')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="suspend-id" />
+      <div class="mf">
+        <label>Usuário</label>
+        <input type="text" id="suspend-name-display" disabled />
+      </div>
+      <div class="mf">
+        <label>Motivo</label>
+        <input type="text" id="suspend-reason" placeholder="Ex: comportamento inadequado" />
+      </div>
+      <div class="mf">
+        <label>Duração</label>
+        <select id="suspend-duration" class="form-select" style="width:100%">
+          <option value="3600000">1 hora</option>
+          <option value="21600000">6 horas</option>
+          <option value="86400000">1 dia</option>
+          <option value="259200000">3 dias</option>
+          <option value="604800000" selected>7 dias</option>
+          <option value="2592000000">30 dias</option>
+          <option value="0">Permanente</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-action gray" onclick="closeModal('modal-suspend')">Cancelar</button>
+      <button class="btn-action red" onclick="applySuspension()">🚫 Suspender</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ MODAL CONFIRMAR DELETE ═══════════════════════ -->
+<div id="modal-delete" class="modal hidden" style="display:none">
+  <div class="modal-box modal-box-sm">
+    <div class="modal-header">
+      <h3>🗑️ Deletar Perfil</h3>
+      <button class="modal-close" onclick="closeModal('modal-delete')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--text2);line-height:1.6">
+        Tem certeza que deseja deletar o perfil de <strong id="delete-name-display" style="color:var(--text)"></strong>?<br>
+        <span style="color:var(--red);font-size:12px">Esta ação não pode ser desfeita.</span>
+      </p>
+      <input type="hidden" id="delete-id" />
+    </div>
+    <div class="modal-footer">
+      <button class="btn-action gray" onclick="closeModal('modal-delete')">Cancelar</button>
+      <button class="btn-action red" onclick="confirmDelete()">🗑️ Deletar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast hidden"></div>
+
+<script src="admin-data.js"></script>
+<script src="painel.js"></script>
+</body>
+</html>

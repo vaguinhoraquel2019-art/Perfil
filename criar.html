@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>✦ Criar meu perfil</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet" />
+  <script src="js/protect.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0c0e14;
+      --bg2:     #13151f;
+      --bg3:     #1a1d2e;
+      --border:  rgba(255,255,255,0.08);
+      --accent:  #8faf7e;
+      --accent2: #4a7c59;
+      --gold:    #c9a87c;
+      --text:    #e8eaf0;
+      --text2:   #9ba3bc;
+      --text3:   #4a5070;
+      --radius:  14px;
+    }
+
+    html, body {
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 20%, rgba(74,124,89,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 80% 80%, rgba(201,168,124,0.08) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .page-header .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(143,175,126,0.1);
+      border: 1px solid rgba(143,175,126,0.25);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .page-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 6vw, 40px);
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+
+    .page-header h1 span { color: var(--accent); }
+
+    .page-header p {
+      font-size: 14px;
+      color: var(--text2);
+      line-height: 1.6;
+    }
+
+    .steps {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+
+    .step-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      transition: all 0.3s;
+    }
+
+    .step-dot.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      width: 24px;
+      border-radius: 4px;
+    }
+
+    .form-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .form-card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg3);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .form-card-header .step-num {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: rgba(143,175,126,0.15);
+      border: 1px solid rgba(143,175,126,0.3);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .form-card-header h3 { font-size: 14px; font-weight: 600; color: var(--text); }
+    .form-card-header p  { font-size: 12px; color: var(--text3); margin-top: 1px; }
+
+    .form-card-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+
+    .field label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text2);
+      letter-spacing: 0.02em;
+    }
+
+    .field label span { color: var(--text3); font-weight: 400; }
+
+    .field input, .field textarea {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      padding: 10px 12px;
+      outline: none;
+      transition: border-color 0.15s;
+      width: 100%;
+    }
+
+    .field input:focus, .field textarea:focus { border-color: var(--accent); }
+    .field input::placeholder, .field textarea::placeholder { color: var(--text3); }
+    .field textarea { resize: vertical; min-height: 70px; }
+
+    .field .hint {
+      font-size: 11px;
+      color: var(--text3);
+      line-height: 1.4;
+    }
+
+    .field-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .img-preview {
+      width: 100%;
+      height: 100px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-top: 6px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .img-preview img { width: 100%; height: 100%; object-fit: cover; display: none; }
+
+    .img-preview.avatar-prev { width: 70px; height: 70px; border-radius: 50%; }
+    .img-preview.avatar-prev img { border-radius: 50%; }
+
+    .img-preview-placeholder { font-size: 24px; opacity: 0.3; }
+
+    .socials-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .social-field { display: flex; flex-direction: column; gap: 6px; }
+
+    .social-field label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text2);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .social-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+    .btn-generate {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      border: none;
+      border-radius: var(--radius);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      margin-top: 8px;
+      box-shadow: 0 4px 20px rgba(74,124,89,0.35);
+    }
+
+    .btn-generate:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(74,124,89,0.45); }
+    .btn-generate:active { transform: translateY(0); }
+
+    /* ── Resultado ── */
+    #result-section {
+      display: none;
+      margin-top: 24px;
+    }
+
+    .result-card {
+      background: var(--bg2);
+      border: 1px solid rgba(143,175,126,0.3);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .result-header {
+      padding: 16px 20px;
+      background: rgba(143,175,126,0.08);
+      border-bottom: 1px solid rgba(143,175,126,0.2);
+    }
+
+    .result-header h3 { font-size: 14px; font-weight: 600; color: var(--accent); }
+    .result-header p  { font-size: 12px; color: var(--text2); margin-top: 4px; }
+
+    .result-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .link-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+    }
+
+    .link-box span {
+      flex: 1;
+      font-family: monospace;
+      font-size: 12px;
+      color: var(--accent);
+      word-break: break-all;
+    }
+
+    .copy-btn {
+      flex-shrink: 0;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text2);
+      font-size: 11px;
+      font-family: 'Inter', sans-serif;
+      padding: 5px 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .copy-btn:hover { color: var(--text); border-color: var(--accent); }
+    .copy-btn.copied { color: var(--accent); border-color: var(--accent); }
+
+    .open-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 20px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      border: none;
+      width: 100%;
+      background: var(--accent2);
+      color: #fff;
+      box-shadow: 0 2px 12px rgba(74,124,89,0.3);
+    }
+
+    .open-btn:hover { background: #3d6b4b; transform: translateY(-1px); }
+
+    .open-btn-sec {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 20px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      background: var(--bg3);
+      color: var(--text2);
+      border: 1px solid var(--border);
+      width: 100%;
+    }
+
+    .open-btn-sec:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+
+    .page-footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 11px;
+      color: var(--text3);
+    }
+
+    .page-footer a { color: var(--accent); text-decoration: none; }
+
+    @media (max-width: 480px) {
+      .field-row-2 { grid-template-columns: 1fr; }
+      .socials-grid { grid-template-columns: 1fr; }
+      .page { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="page-header">
+    <div class="badge">✦ Paradise Profile</div>
+    <h1>Crie o seu <span>perfil</span></h1>
+    <p>Preencha as informações abaixo e receba o link do seu perfil na hora.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step-dot active" id="dot-1"></div>
+    <div class="step-dot" id="dot-2"></div>
+    <div class="step-dot" id="dot-3"></div>
+    <div class="step-dot" id="dot-4"></div>
+  </div>
+
+  <!-- CARD 1: PERFIL -->
+  <div class="form-card">
+    <div class="form-card-header">
+      <div class="step-num">1</div>
+      <div>
+        <h3>👤 Seu Perfil</h3>
+        <p>Nome, descrição e localização</p>
+      </div>
+    </div>
+    <div class="form-card-body">
+      <div class="field-row-2">
+        <div class="field">
+          <label>Nome <span>*</span></label>
+          <input type="text" id="f-name" placeholder="Seu nome" maxlength="30" />
+        </div>
+        <div class="field">
+          <label>Usuário do cartão</label>
+          <input type="text" id="f-username" placeholder="usuario.123" maxlength="30" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Frase / descrição</label>
+        <input type="text" id="f-desc" placeholder="⁺˖ ୨ sua frase aqui ୧˖⁺" maxlength="80" />
+      </div>
+      <div class="field">
+        <label>Status do cartão</label>
+        <input type="text" id="f-status" placeholder="sua frase de status" maxlength="100" />
+      </div>
+      <div class="field-row-2">
+        <div class="field">
+          <label>Localização</label>
+          <input type="text" id="f-location" placeholder="Sua cidade" maxlength="30" />
+        </div>
+        <div class="field">
+          <label>Título da aba</label>
+          <input type="text" id="f-title" placeholder="Nome ♡" maxlength="40" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 2: IMAGENS -->
+  <div class="form-card">
+    <div class="form-card-header">
+      <div class="step-num">2</div>
+      <div>
+        <h3>🖼️ Imagens</h3>
+        <p>Cole as URLs das suas imagens</p>
+      </div>
+    </div>
+    <div class="form-card-body">
+      <div class="field">
+        <label>Foto de perfil (avatar)</label>
+        <input type="url" id="f-avatar" placeholder="https://..." />
+        <div class="img-preview avatar-prev" id="prev-avatar">
+          <img id="prev-avatar-img" src="" alt="" />
+          <span class="img-preview-placeholder">👤</span>
+        </div>
+        <p class="hint">Imagem quadrada ou circular. Recomendado: 300×300px.</p>
+      </div>
+      <div class="field">
+        <label>Fundo da página principal</label>
+        <input type="url" id="f-mainbg" placeholder="https://..." />
+        <div class="img-preview" id="prev-mainbg">
+          <img id="prev-mainbg-img" src="" alt="" />
+          <span class="img-preview-placeholder">🌿</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Fundo da tela de entrada <span>(opcional)</span></label>
+        <input type="url" id="f-entrancebg" placeholder="https://... (deixe vazio para usar o mesmo fundo)" />
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 3: REDES SOCIAIS -->
+  <div class="form-card">
+    <div class="form-card-header">
+      <div class="step-num">3</div>
+      <div>
+        <h3>🔗 Redes Sociais</h3>
+        <p>Deixe em branco as que não quer mostrar</p>
+      </div>
+    </div>
+    <div class="form-card-body">
+      <div class="socials-grid">
+        <div class="social-field">
+          <label><span class="social-dot" style="background:#1db954"></span>Spotify</label>
+          <input type="url" id="f-spotify" placeholder="https://open.spotify.com/..." />
+        </div>
+        <div class="social-field">
+          <label><span class="social-dot" style="background:#e1306c"></span>Instagram</label>
+          <input type="url" id="f-instagram" placeholder="https://instagram.com/..." />
+        </div>
+        <div class="social-field">
+          <label><span class="social-dot" style="background:#69c9d0"></span>TikTok</label>
+          <input type="url" id="f-tiktok" placeholder="https://tiktok.com/@..." />
+        </div>
+        <div class="social-field">
+          <label><span class="social-dot" style="background:#e60023"></span>Pinterest</label>
+          <input type="url" id="f-pinterest" placeholder="https://pinterest.com/..." />
+        </div>
+        <div class="social-field">
+          <label><span class="social-dot" style="background:#1da1f2"></span>Twitter / X</label>
+          <input type="url" id="f-twitter" placeholder="https://twitter.com/..." />
+        </div>
+        <div class="social-field">
+          <label><span class="social-dot" style="background:#ff0000"></span>YouTube</label>
+          <input type="url" id="f-youtube" placeholder="https://youtube.com/..." />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 4: MÚSICA -->
+  <div class="form-card">
+    <div class="form-card-header">
+      <div class="step-num">4</div>
+      <div>
+        <h3>🎵 Música <span style="font-size:11px;color:var(--text3);font-weight:400">(opcional)</span></h3>
+        <p>Link direto de arquivo .mp3</p>
+      </div>
+    </div>
+    <div class="form-card-body">
+      <div class="field">
+        <label>URL do arquivo de música</label>
+        <input type="url" id="f-audio" placeholder="https://... (precisa ser link direto de .mp3)" />
+        <p class="hint">✅ Aceita links do <strong>YouTube</strong> (youtu.be/... ou youtube.com/watch?v=...) ou link direto de arquivo <strong>.mp3</strong><br>⚠️ Spotify, SoundCloud e Deezer não são suportados.</p>
+      </div>
+      <div class="field-row-2">
+        <div class="field">
+          <label>Nome da música</label>
+          <input type="text" id="f-audio-title" placeholder="Nome da música" maxlength="50" />
+        </div>
+        <div class="field">
+          <label>Artista</label>
+          <input type="text" id="f-audio-artist" placeholder="Nome do artista" maxlength="50" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 5: CONTA -->
+  <div class="form-card">
+    <div class="form-card-header">
+      <div class="step-num">5</div>
+      <div>
+        <h3>🔐 Sua Conta</h3>
+        <p>Para editar seu perfil depois</p>
+      </div>
+    </div>
+    <div class="form-card-body">
+      <div class="field">
+        <label>Usuário da conta <span style="color:var(--text3);font-weight:400">*</span></label>
+        <input type="text" id="f-conta-user" placeholder="Escolha um nome de usuário" maxlength="30" autocomplete="off" />
+        <p class="hint">📌 Use esse usuário para entrar em "Minha Conta" e editar seu perfil.</p>
+      </div>
+      <div class="field-row-2">
+        <div class="field">
+          <label>Senha <span style="color:var(--text3);font-weight:400">(mín. 4 caracteres)</span></label>
+          <input type="password" id="f-senha" placeholder="Crie uma senha" />
+        </div>
+        <div class="field">
+          <label>Confirmar senha</label>
+          <input type="password" id="f-senha-conf" placeholder="Repita a senha" />
+        </div>
+      </div>
+      <p class="hint">💡 Com esse usuário e senha você poderá editar seu perfil depois clicando no ⚙️ que aparece no seu perfil.</p>
+    </div>
+  </div>
+
+  <button class="btn-generate" onclick="generateProfile()">
+    ✦ Gerar meu perfil
+  </button>
+
+  <!-- Resultado -->
+  <div id="result-section">
+    <div class="result-card">
+      <div class="result-header">
+        <h3>✅ Seu perfil está pronto!</h3>
+        <p>Abra o link abaixo para ver seu perfil</p>
+      </div>
+      <div class="result-body">
+
+        <div class="link-box">
+          <span id="profile-link-text"></span>
+          <button class="copy-btn" id="copy-btn" onclick="copyLink()">Copiar</button>
+        </div>
+
+        <a id="open-profile-btn" href="#" target="_blank" class="open-btn">
+          🌸 Abrir meu perfil
+        </a>
+
+        <a href="minha-conta.html" class="open-btn-sec">⚙️ Ir para minha conta</a>
+
+        <a href="index.html" class="open-btn-sec">← Ver perfil de exemplo</a>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="page-footer">
+  Feito com 🌸 — <a href="index.html">Ver perfil de exemplo</a>
+</div>
+
+<script src="admin-data.js"></script>
+<script>
+  // Preview de imagens em tempo real
+  function bindPreview(inputId, imgId, wrapId) {
+    const input = document.getElementById(inputId);
+    const img   = document.getElementById(imgId);
+    const wrap  = document.getElementById(wrapId);
+    if (!input) return;
+    input.addEventListener("input", () => {
+      const url = input.value.trim();
+      if (url) {
+        img.src = url;
+        img.style.display = "block";
+        const ph = wrap && wrap.querySelector(".img-preview-placeholder");
+        if (ph) ph.style.display = "none";
+      } else {
+        img.style.display = "none";
+        const ph = wrap && wrap.querySelector(".img-preview-placeholder");
+        if (ph) ph.style.display = "";
+      }
+    });
+  }
+
+  bindPreview("f-avatar", "prev-avatar-img", "prev-avatar");
+  bindPreview("f-mainbg", "prev-mainbg-img", "prev-mainbg");
+
+  // Progress dots
+  const cardSteps = ["f-name", "f-avatar", "f-spotify", "f-audio"];
+  cardSteps.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener("focus", () => {
+      document.querySelectorAll(".step-dot").forEach((d, di) => {
+        d.classList.toggle("active", di <= i);
+      });
+    });
+  });
+
+  let profileUrl = "";
+
+  function generateProfile() {
+    const name        = document.getElementById("f-name").value.trim();
+    const username    = document.getElementById("f-username").value.trim()    || "usuario.123";
+    const desc        = document.getElementById("f-desc").value.trim()        || "⁺˖ ୨ minha frase ୧˖⁺";
+    const status      = document.getElementById("f-status").value.trim()      || "meu status";
+    const location    = document.getElementById("f-location").value.trim()    || "Minha cidade";
+    const pageTitle   = document.getElementById("f-title").value.trim()       || (name || "Perfil") + " ♡";
+    const avatar      = document.getElementById("f-avatar").value.trim()      || "";
+    const mainBg      = document.getElementById("f-mainbg").value.trim()      || "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=1600&q=80";
+    const entranceBg  = document.getElementById("f-entrancebg").value.trim()  || mainBg;
+    const spotify     = document.getElementById("f-spotify").value.trim()     || "";
+    const instagram   = document.getElementById("f-instagram").value.trim()   || "";
+    const tiktok      = document.getElementById("f-tiktok").value.trim()      || "";
+    const pinterest   = document.getElementById("f-pinterest").value.trim()   || "";
+    const twitter     = document.getElementById("f-twitter").value.trim()     || "";
+    const youtube     = document.getElementById("f-youtube").value.trim()     || "";
+    const audioUrl    = document.getElementById("f-audio").value.trim()       || "";
+    const audioTitle  = document.getElementById("f-audio-title").value.trim() || "Minha música";
+    const audioArtist = document.getElementById("f-audio-artist").value.trim()|| "Artista";
+
+    if (!name) {
+      alert("Preencha pelo menos o seu nome!");
+      document.getElementById("f-name").focus();
+      return;
+    }
+
+    // Valida campos da conta
+    const contaUser = document.getElementById("f-conta-user").value.trim();
+    const senha     = document.getElementById("f-senha").value.trim();
+    const senhaConf = document.getElementById("f-senha-conf").value.trim();
+
+    if (!contaUser) {
+      alert("Preencha o usuário da conta!");
+      document.getElementById("f-conta-user").focus();
+      return;
+    }
+    if (!senha || senha.length < 4) {
+      alert("Crie uma senha com pelo menos 4 caracteres!");
+      document.getElementById("f-senha").focus();
+      return;
+    }
+    if (senha !== senhaConf) {
+      alert("As senhas não conferem!");
+      document.getElementById("f-senha-conf").focus();
+      return;
+    }
+
+    // Bloqueia links inválidos de música (Spotify, SoundCloud, Deezer)
+    if (audioUrl && /spotify\.com|soundcloud\.com|deezer\.com/i.test(audioUrl)) {
+      alert("❌ Spotify, SoundCloud e Deezer não são suportados.\n\nUse um link do YouTube ou um arquivo .mp3 direto.");
+      document.getElementById("f-audio").focus();
+      document.getElementById("f-audio").style.borderColor = "#e07070";
+      return;
+    }
+    document.getElementById("f-audio").style.borderColor = "";
+
+    // Salva todos os dados no localStorage
+    const profileData = {
+      name, username, desc, status, location, title: pageTitle,
+      avatar, mainbg: mainBg, entrancebg: entranceBg,
+      spotify, instagram, tiktok, pinterest, twitter, youtube,
+      audio: audioUrl, audioTitle, audioArtist
+    };
+
+    // Registra no admin-data para aparecer no painel
+    if (typeof registerProfile === "function") {
+      registerProfile(profileData);
+    }
+
+    // ── Salva no profiles-db.json do GitHub (banco central de buscas) ──
+    salvarPerfilNoGitHub(profileData).catch(() => {/* silencioso */});
+
+    // Cria conta do usuário — usa o usuário da conta, não o username do cartão
+    if (senha && senha.length >= 4 && typeof registerUserAccount === "function") {
+      registerUserAccount(contaUser, senha, username);
+      // Faz login automático na conta criada — persiste em ambos os storages
+      try {
+        const sessionData = JSON.stringify({ username: contaUser, password: senha, profileId: username });
+        sessionStorage.setItem("paradise_user_session", sessionData);
+        localStorage.setItem("paradise_user_session", sessionData);
+      } catch(e) {}
+    }
+
+    // Gera um ID único para este perfil
+    const profileId = "p_" + Date.now().toString(36);
+    try {
+      localStorage.setItem("paradise_profile", JSON.stringify(profileData));
+      localStorage.setItem("paradise_profile_id", profileId);
+    } catch(e) {}
+
+    // Monta URL curta só com o ID + os dados como parâmetros (fallback)
+    const params = new URLSearchParams({ name, username, desc, status, location,
+      title: pageTitle, avatar, mainbg: mainBg, entrancebg: entranceBg,
+      spotify, instagram, tiktok, pinterest, twitter, youtube,
+      audio: audioUrl, audioTitle, audioArtist
+    });
+
+    const base = window.location.origin + window.location.pathname.replace("criar.html", "index.html");
+    profileUrl = base + "?" + params.toString();
+
+    document.getElementById("profile-link-text").textContent = profileUrl;
+    document.getElementById("open-profile-btn").href = profileUrl;
+
+    const section = document.getElementById("result-section");
+    section.style.display = "block";
+    section.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function copyLink() {
+    if (!profileUrl) return;
+    navigator.clipboard.writeText(profileUrl).then(() => {
+      const btn = document.getElementById("copy-btn");
+      btn.textContent = "Copiado!";
+      btn.classList.add("copied");
+      setTimeout(() => {
+        btn.textContent = "Copiar";
+        btn.classList.remove("copied");
+      }, 2000);
+    });
+  }
+
+  // ── Salva/atualiza perfil no profiles-db.json via GitHub API ──
+  const GITHUB_REPO   = "vaguinhoraquel2019-art/Perfil";
+  const GITHUB_BRANCH = "main";
+  const DB_FILE_PATH  = "profiles-db.json";
+
+  // Token guardado no localStorage do browser — nunca fica no código
+  function getGHToken() {
+    return localStorage.getItem("paradise_gh_token") || "";
+  }
+
+  async function salvarPerfilNoGitHub(profileData) {
+    const GH_TOKEN = getGHToken();
+    if (!GH_TOKEN) return; // Token não configurado — pula silenciosamente
+
+    const apiBase = "https://api.github.com/repos/" + GITHUB_REPO + "/contents/" + DB_FILE_PATH;
+    const headers = {
+      "Authorization": "token " + GH_TOKEN,
+      "Content-Type": "application/json",
+      "Accept": "application/vnd.github+json",
+    };
+
+    // 1. Lê o arquivo atual para pegar o SHA (obrigatório para update)
+    let currentSha   = null;
+    let currentProfiles = [];
+    try {
+      const getRes  = await fetch(apiBase + "?ref=" + GITHUB_BRANCH, { headers });
+      const getData = await getRes.json();
+      currentSha    = getData.sha;
+      const decoded = atob(getData.content.replace(/\n/g, ""));
+      const parsed  = JSON.parse(decoded);
+      currentProfiles = parsed.profiles || [];
+    } catch(e) {}
+
+    // 2. Monta o entry do novo perfil
+    const id       = profileData.username || profileData.name || ("user_" + Date.now().toString(36));
+    const existIdx = currentProfiles.findIndex(p => p.id === id);
+    const entry    = {
+      id,
+      name:      profileData.name     || "",
+      username:  profileData.username || "",
+      createdAt: existIdx >= 0 ? currentProfiles[existIdx].createdAt : Date.now(),
+      updatedAt: Date.now(),
+      data:      profileData,
+    };
+    if (existIdx >= 0) {
+      currentProfiles[existIdx] = entry;
+    } else {
+      currentProfiles.push(entry);
+    }
+
+    // 3. Codifica o novo conteúdo em Base64
+    const newContent = JSON.stringify({ profiles: currentProfiles }, null, 2);
+    const encoded    = btoa(unescape(encodeURIComponent(newContent)));
+
+    // 4. Faz o PUT para atualizar o arquivo
+    const body = {
+      message: "Novo perfil: " + id,
+      content: encoded,
+      branch:  GITHUB_BRANCH,
+    };
+    if (currentSha) body.sha = currentSha;
+
+    const putRes = await fetch(apiBase, {
+      method:  "PUT",
+      headers,
+      body:    JSON.stringify(body),
+    });
+
+    if (!putRes.ok) {
+      const errData = await putRes.json().catch(() => ({}));
+      throw new Error("GitHub API error: " + (errData.message || putRes.status));
+    }
+  }
+</script>
+
+</body>
+</html>

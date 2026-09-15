@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Criar Story</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>" />
+  <script src="js/protect.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #000;
+      --radius: 14px;
+      --btn-size: 44px;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      background: #000;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      overflow: hidden;
+      color: #fff;
+      touch-action: manipulation;
+    }
+
+    /* ══ TELA DE SELEÇÃO ══ */
+    #pick-screen {
+      position: fixed;
+      inset: 0;
+      background: #0a0c14;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      z-index: 10;
+      padding: 40px 20px;
+    }
+
+    #pick-screen .logo { font-size: 32px; }
+    #pick-screen h1 { font-size: 22px; font-weight: 700; color: #e8eaf0; }
+    #pick-screen p  { font-size: 13px; color: #9ba3bc; text-align: center; }
+
+    .pick-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      max-width: 320px;
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+
+    .pick-btn.primary { background: #fff; color: #000; }
+    .pick-btn.primary:hover { background: #e8e8e8; }
+    .pick-btn.outline { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+    .pick-btn.outline:hover { background: rgba(255,255,255,0.06); }
+    .pick-btn.back { background: transparent; color: #9ba3bc; font-size: 13px; }
+
+    /* ══ EDITOR ══ */
+    #editor-screen {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      display: none;
+      flex-direction: column;
+    }
+
+    /* Canvas / preview da imagem */
+    #canvas-wrap {
+      position: relative;
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      touch-action: none;
+    }
+
+    #story-canvas {
+      max-width: 100%;
+      max-height: 100%;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* Overlay de textos arrastáveis */
+    #texts-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .story-text-el {
+      position: absolute;
+      color: #fff;
+      font-size: 22px;
+      font-weight: 700;
+      text-shadow: 0 1px 6px rgba(0,0,0,0.7);
+      white-space: nowrap;
+      cursor: grab;
+      pointer-events: all;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      font-family: inherit;
+      letter-spacing: -0.01em;
+    }
+
+    /* Botões laterais */
+    #side-tools {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 20;
+    }
+
+    .tool-btn {
+      width: var(--btn-size);
+      height: var(--btn-size);
+      border-radius: 50%;
+      background: rgba(30,30,30,0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #fff;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tool-btn:hover, .tool-btn:active { background: rgba(60,60,60,0.9); transform: scale(1.08); }
+    .tool-btn.active { background: rgba(255,255,255,0.95); color: #000; }
+
+    /* Header */
+    #editor-header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 20;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent);
+    }
+
+    #btn-back-editor {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.4);
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+
+    #btn-publish {
+      padding: 9px 20px;
+      background: #fff;
+      color: #000;
+      border: none;
+      border-radius: 20px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    #btn-publish:hover { background: #e0e0e0; }
+
+    /* ══ FILTROS ══ */
+    #filters-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 20;
+      padding: 12px 0 20px;
+      background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+    }
+
+    #filters-list {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 0 16px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      scroll-snap-type: x mandatory;
+    }
+    #filters-list::-webkit-scrollbar { display: none; }
+
+    .filter-item {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      scroll-snap-align: start;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .filter-thumb {
+      width: 54px;
+      height: 54px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 2px solid transparent;
+      transition: border-color 0.15s, transform 0.15s;
+      position: relative;
+    }
+
+    .filter-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+    }
+
+    .filter-item.active .filter-thumb {
+      border-color: #fff;
+      transform: scale(1.08);
+    }
+
+    .filter-name {
+      font-size: 10px;
+      color: rgba(255,255,255,0.8);
+      font-weight: 500;
+      text-align: center;
+    }
+
+    .filter-item.active .filter-name { color: #fff; font-weight: 700; }
+
+    /* ══ PAINÉIS ══ */
+    .panel {
+      position: absolute;
+      inset: 0;
+      z-index: 30;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+    }
+    .panel.open { display: flex; }
+
+    .panel-box {
+      background: #1a1d2e;
+      border-radius: 20px 20px 0 0;
+      width: 100%;
+      max-width: 480px;
+      padding: 20px 20px 40px;
+    }
+
+    .panel-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #e8eaf0;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .panel-input {
+      width: 100%;
+      background: #0f1118;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      color: #e8eaf0;
+      font-family: inherit;
+      font-size: 16px;
+      padding: 12px 14px;
+      outline: none;
+      resize: none;
+      margin-bottom: 12px;
+    }
+    .panel-input:focus { border-color: rgba(255,255,255,0.3); }
+
+    .panel-btn {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .panel-btn.confirm { background: #fff; color: #000; }
+    .panel-btn.confirm:hover { background: #e0e0e0; }
+    .panel-btn.cancel  { background: transparent; color: rgba(255,255,255,0.5); margin-top: 8px; }
+
+    /* Indicador de música salva */
+    #music-indicator {
+      position: absolute;
+      top: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 12px;
+      color: #fff;
+      display: none;
+      align-items: center;
+      gap: 6px;
+      z-index: 21;
+      white-space: nowrap;
+      max-width: calc(100% - 120px);
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Toast */
+    #editor-toast {
+      position: absolute;
+      bottom: 140px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 9px 18px;
+      font-size: 13px;
+      color: #fff;
+      display: none;
+      z-index: 40;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ TELA DE SELEÇÃO DE FOTO ══ -->
+<div id="pick-screen">
+  <div class="logo">✦</div>
+  <h1>Criar Story</h1>
+  <p>Escolha uma foto para o seu Story</p>
+
+  <label style="width:100%;max-width:320px">
+    <input type="file" id="file-input" accept="image/*" style="display:none" />
+    <div class="pick-btn primary">📷 Escolher da galeria</div>
+  </label>
+
+  <button class="pick-btn back" onclick="window.location.href='minha-conta.html'">← Voltar</button>
+</div>
+
+<!-- ══ EDITOR ══ -->
+<div id="editor-screen">
+
+  <!-- Header -->
+  <div id="editor-header">
+    <button id="btn-back-editor" onclick="voltarParaSelecao()">←</button>
+    <!-- Seletor de duração -->
+    <div style="display:flex;align-items:center;gap:6px">
+      <select id="story-duration" style="
+        background:rgba(0,0,0,0.5);
+        backdrop-filter:blur(10px);
+        border:1px solid rgba(255,255,255,0.2);
+        border-radius:20px;
+        color:#fff;
+        font-family:inherit;
+        font-size:12px;
+        font-weight:600;
+        padding:7px 12px;
+        cursor:pointer;
+        outline:none;
+        appearance:none;
+        -webkit-appearance:none;
+      ">
+        <option value="5">⏱ 5s</option>
+        <option value="10" selected>⏱ 10s</option>
+        <option value="15">⏱ 15s</option>
+        <option value="20">⏱ 20s</option>
+        <option value="30">⏱ 30s</option>
+        <option value="45">⏱ 45s</option>
+        <option value="60">⏱ 1 min</option>
+      </select>
+      <button id="btn-publish" onclick="publicarStory()">Publicar ✓</button>
+    </div>
+  </div>
+
+  <!-- Canvas / imagem -->
+  <div id="canvas-wrap">
+    <img id="story-canvas" src="" alt="" draggable="false" />
+    <div id="texts-layer"></div>
+
+    <!-- Indicador de música -->
+    <div id="music-indicator">♫ <span id="music-label">música adicionada</span></div>
+  </div>
+
+  <!-- Botões laterais -->
+  <div id="side-tools">
+    <button class="tool-btn" id="btn-text" title="Adicionar texto" onclick="abrirPainelTexto()">Aa</button>
+    <button class="tool-btn" id="btn-music" title="Adicionar música" onclick="abrirPainelMusica()">♫</button>
+  </div>
+
+  <!-- Barra de filtros -->
+  <div id="filters-bar">
+    <div id="filters-list">
+      <!-- gerado pelo JS -->
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="editor-toast"></div>
+</div>
+
+<!-- ══ PAINEL DE TEXTO ══ -->
+<div class="panel" id="panel-texto">
+  <div class="panel-box">
+    <div class="panel-title">✍️ Adicionar texto</div>
+    <textarea class="panel-input" id="texto-input" rows="3" placeholder="Digite o seu texto..."></textarea>
+    <button class="panel-btn confirm" onclick="confirmarTexto()">✓ Adicionar</button>
+    <button class="panel-btn cancel"  onclick="fecharPainel('panel-texto')">Cancelar</button>
+  </div>
+</div>
+
+<!-- ══ PAINEL DE MÚSICA ══ -->
+<div class="panel" id="panel-musica">
+  <div class="panel-box">
+    <div class="panel-title">♫ Adicionar música</div>
+    <input type="url" class="panel-input" id="musica-input" placeholder="Cole o link da música (YouTube, etc.)" style="resize:none" />
+    <input type="text" class="panel-input" id="musica-nome" placeholder="Nome da música (opcional)" />
+    <button class="panel-btn confirm" onclick="confirmarMusica()">✓ Salvar música</button>
+    <button class="panel-btn cancel"  onclick="fecharPainel('panel-musica')">Cancelar</button>
+  </div>
+</div>
+
+<script src="admin-data.js"></script>
+<script>
+  // ── Dados do story em edição ──
+  let storyImage    = null; // base64
+  let storyFilter   = "none";
+  let storyTexts    = [];   // { text, x, y, color, size }
+  let storyMusic    = "";
+  let storyMusicName = "";
+
+  // ── Filtros ──
+  const FILTERS = [
+    { id: "none",       name: "Original",    css: "none" },
+    { id: "lores",      name: "Lo-Res",      css: "contrast(1.3) saturate(0.6) brightness(0.9)" },
+    { id: "handheld",   name: "Handheld",    css: "blur(1.2px) brightness(1.05) contrast(0.95)" },
+    { id: "riodejaneiro", name: "Rio de Janeiro", css: "hue-rotate(220deg) saturate(1.4) brightness(1.1)" },
+    { id: "softlight",  name: "Soft Light",  css: "brightness(1.15) contrast(0.85) saturate(1.1)" },
+    { id: "zoomblur",   name: "Zoom Blur",   css: "blur(2px) saturate(1.5) contrast(1.2)" },
+    { id: "hyper",      name: "Hyper",       css: "saturate(2) contrast(1.3) brightness(1.05)" },
+    { id: "graphite",   name: "Graphite",    css: "grayscale(1) contrast(1.1) brightness(0.95)" },
+  ];
+
+  // ── Init ──
+  document.getElementById("file-input").addEventListener("change", function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      storyImage = ev.target.result;
+      document.getElementById("story-canvas").src = storyImage;
+      abrirEditor();
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function abrirEditor() {
+    document.getElementById("pick-screen").style.display  = "none";
+    document.getElementById("editor-screen").style.display = "flex";
+    buildFilters();
+    aplicarFiltro("none");
+  }
+
+  function voltarParaSelecao() {
+    if (!confirm("Descartar o story?")) return;
+    document.getElementById("pick-screen").style.display   = "flex";
+    document.getElementById("editor-screen").style.display = "none";
+    resetEditor();
+  }
+
+  function resetEditor() {
+    storyImage = null; storyFilter = "none";
+    storyTexts = []; storyMusic = ""; storyMusicName = "";
+    document.getElementById("texts-layer").innerHTML = "";
+    document.getElementById("music-indicator").style.display = "none";
+    document.getElementById("story-canvas").src = "";
+    document.getElementById("file-input").value = "";
+  }
+
+  // ── Filtros ──
+  function buildFilters() {
+    const list = document.getElementById("filters-list");
+    list.innerHTML = "";
+    const img = document.getElementById("story-canvas");
+
+    FILTERS.forEach(f => {
+      const item = document.createElement("div");
+      item.className = "filter-item" + (f.id === "none" ? " active" : "");
+      item.dataset.id = f.id;
+
+      const thumb = document.createElement("div");
+      thumb.className = "filter-thumb";
+
+      const tImg = document.createElement("img");
+      tImg.src = img.src;
+      tImg.style.filter = f.css;
+      thumb.appendChild(tImg);
+
+      const name = document.createElement("div");
+      name.className = "filter-name";
+      name.textContent = f.name;
+
+      item.appendChild(thumb);
+      item.appendChild(name);
+      item.addEventListener("click", () => aplicarFiltro(f.id));
+      list.appendChild(item);
+    });
+  }
+
+  function aplicarFiltro(id) {
+    const f = FILTERS.find(x => x.id === id) || FILTERS[0];
+    storyFilter = id;
+    document.getElementById("story-canvas").style.filter = f.css;
+    document.querySelectorAll(".filter-item").forEach(el => {
+      el.classList.toggle("active", el.dataset.id === id);
+    });
+  }
+
+  // ── Texto ──
+  function abrirPainelTexto() { document.getElementById("panel-texto").classList.add("open"); document.getElementById("texto-input").focus(); }
+
+  function fecharPainel(id) { document.getElementById(id).classList.remove("open"); }
+
+  function confirmarTexto() {
+    const txt = document.getElementById("texto-input").value.trim();
+    if (!txt) { fecharPainel("panel-texto"); return; }
+    document.getElementById("texto-input").value = "";
+    fecharPainel("panel-texto");
+    adicionarTextoNaTela(txt, 50, 50);
+  }
+
+  function adicionarTextoNaTela(text, xPct, yPct) {
+    const layer = document.getElementById("texts-layer");
+    const el    = document.createElement("div");
+    el.className   = "story-text-el";
+    el.textContent = text;
+    el.style.left  = xPct + "%";
+    el.style.top   = yPct + "%";
+    el.style.transform = "translate(-50%, -50%)";
+
+    // Arrastar
+    let dragging = false, startX, startY, origX, origY;
+
+    function getPos(e) {
+      return e.touches ? { x: e.touches[0].clientX, y: e.touches[0].clientY }
+                       : { x: e.clientX, y: e.clientY };
+    }
+
+    el.addEventListener("mousedown",  startDrag);
+    el.addEventListener("touchstart", startDrag, { passive: true });
+
+    function startDrag(e) {
+      dragging = true;
+      const pos = getPos(e);
+      startX = pos.x; startY = pos.y;
+      const rect = layer.getBoundingClientRect();
+      origX = (parseFloat(el.style.left) / 100) * rect.width;
+      origY = (parseFloat(el.style.top)  / 100) * rect.height;
+      el.style.cursor = "grabbing";
+    }
+
+    function onMove(e) {
+      if (!dragging) return;
+      const pos  = getPos(e);
+      const rect = layer.getBoundingClientRect();
+      const newX = Math.max(0, Math.min(rect.width,  origX + pos.x - startX));
+      const newY = Math.max(0, Math.min(rect.height, origY + pos.y - startY));
+      el.style.left = (newX / rect.width  * 100) + "%";
+      el.style.top  = (newY / rect.height * 100) + "%";
+    }
+
+    function endDrag() { dragging = false; el.style.cursor = "grab"; saveTexts(); }
+
+    document.addEventListener("mousemove",  onMove);
+    document.addEventListener("touchmove",  onMove, { passive: true });
+    document.addEventListener("mouseup",    endDrag);
+    document.addEventListener("touchend",   endDrag);
+
+    layer.appendChild(el);
+    saveTexts();
+  }
+
+  function saveTexts() {
+    const layer = document.getElementById("texts-layer");
+    storyTexts = [];
+    layer.querySelectorAll(".story-text-el").forEach(el => {
+      storyTexts.push({
+        text: el.textContent,
+        x:    parseFloat(el.style.left),
+        y:    parseFloat(el.style.top),
+      });
+    });
+  }
+
+  // ── Música ──
+  function abrirPainelMusica() { document.getElementById("panel-musica").classList.add("open"); document.getElementById("musica-input").focus(); }
+
+  function confirmarMusica() {
+    const url  = document.getElementById("musica-input").value.trim();
+    const nome = document.getElementById("musica-nome").value.trim();
+    document.getElementById("musica-input").value = "";
+    document.getElementById("musica-nome").value  = "";
+    fecharPainel("panel-musica");
+    if (!url) return;
+    storyMusic     = url;
+    storyMusicName = nome || extrairNomeUrl(url);
+    const ind = document.getElementById("music-indicator");
+    document.getElementById("music-label").textContent = storyMusicName || "música adicionada";
+    ind.style.display = "flex";
+    showToast("♫ Música adicionada!");
+  }
+
+  function extrairNomeUrl(url) {
+    try { return decodeURIComponent(url.split("/").pop().split("?")[0]).slice(0,30); } catch(e) { return "música"; }
+  }
+
+  // ── Publicar ──
+  function publicarStory() {
+    if (!storyImage) { showToast("Selecione uma foto primeiro."); return; }
+    const session = sessionStorage.getItem("paradise_user_session") || localStorage.getItem("paradise_user_session");
+    if (!session) { alert("Faça login primeiro."); window.location.href = "minha-conta.html"; return; }
+    const s = JSON.parse(session);
+    saveTexts();
+    // Pega duração escolhida (em segundos)
+    const durSec = parseInt(document.getElementById("story-duration").value) || 10;
+    const story = publishStory(s.username, s.profileId || s.username, storyImage, storyFilter, storyTexts, storyMusic, storyMusicName, durSec);
+    showToast("✅ Story publicado!", 2000);
+    setTimeout(() => { window.location.href = "minha-conta.html"; }, 2100);
+  }
+
+  function showToast(msg, dur) {
+    const t = document.getElementById("editor-toast");
+    t.textContent = msg;
+    t.style.display = "block";
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => { t.style.display = "none"; }, dur || 2000);
+  }
+</script>
+</body>
+</html>

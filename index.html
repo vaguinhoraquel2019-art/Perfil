@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title id="page-title">Polly ♡</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥊</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="config.js"></script>
+  <script src="admin-data.js"></script>
+  <script src="js/protect.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- CURSOR -->
+  <div id="custom-cursor">😶‍🌫️</div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--        TELA DE ENTRADA                  -->
+  <!-- ═══════════════════════════════════════ -->
+  <div id="entrance-screen">
+    <div id="entrance-bg"></div>
+    <div id="entrance-overlay"></div>
+    <div id="entrance-content">
+      <p id="entrance-text">click to enter...</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!--        PÁGINA PRINCIPAL                 -->
+  <!-- ═══════════════════════════════════════ -->
+  <div id="main-page" class="hidden">
+
+    <div id="main-bg"></div>
+    <div id="main-overlay"></div>
+    <div id="particles-container"></div>
+
+    <div id="profile-wrapper">
+
+      <!-- Avatar -->
+      <div id="avatar-container">
+        <div id="avatar-ring" title="">
+          <img id="avatar-img" src="" alt="Avatar" />
+        </div>
+        <!-- Círculo de story (aparece quando há story ativo) -->
+        <div id="story-ring" class="story-ring hidden"></div>
+        <div class="floral-left"></div>
+        <div class="floral-right"></div>
+      </div>
+
+      <!-- Nome -->
+      <h1 id="profile-name">Polly</h1>
+
+      <!-- Descrição -->
+      <p id="profile-description">⁺˖ ୨ A piece of paradise ୧˖⁺</p>
+
+      <!-- Localização -->
+      <p id="profile-location">
+        <span class="location-pin">📍</span>
+        <span id="location-text">Paradise</span>
+      </p>
+
+      <!-- Cartão -->
+      <div id="info-card">
+        <div id="card-left">
+          <img id="card-avatar" src="" alt="Card Avatar" />
+        </div>
+        <div id="card-right">
+          <div id="card-username-row">
+            <span id="card-username">polly.505.</span>
+            <span id="card-icons"></span>
+          </div>
+          <p id="card-status">Too tired to be anyone's Athena</p>
+        </div>
+      </div>
+
+      <!-- Redes sociais -->
+      <div id="socials-row">
+
+        <a id="social-spotify" class="social-btn hidden" href="#" target="_blank" rel="noopener" title="Spotify">
+          <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.622.622 0 01-.857.207c-2.348-1.435-5.304-1.76-8.785-.964a.622.622 0 11-.277-1.215c3.809-.87 7.076-.496 9.712 1.115a.622.622 0 01.207.857zm1.223-2.722a.779.779 0 01-1.072.257C14.1 12.282 10.763 11.9 7.28 12.88a.778.778 0 01-.962-.518.779.779 0 01.518-.963c3.9-1.083 7.642-.657 10.687 1.231a.779.779 0 01.286 1.072zm.105-2.835C15.127 9.017 10.742 8.87 7.762 9.76a.935.935 0 11-.543-1.789c3.393-.99 8.27-.8 11.535 1.239a.935.935 0 01-.94 1.657z"/></svg>
+        </a>
+
+        <a id="social-instagram" class="social-btn hidden" href="#" target="_blank" rel="noopener" title="Instagram">
+          <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        </a>
+
+        <a id="social-pinterest" class="social-btn hidden" href="#" target="_blank" rel="noopener" title="Pinterest">
+          <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+        </a>
+
+        <a id="social-tiktok" class="social-btn hidden" href="#" target="_blank" rel="noopener" title="TikTok">
+          <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.14 8.14 0 004.76 1.52V6.73a4.85 4.85 0 01-1-.04z"/></svg>
+        </a>
+
+        <a id="social-twitter" class="social-btn hidden" href="#" target="_blank" rel="noopener" title="Twitter">
+          <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.264 5.634 5.9-5.634zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+
+        <a id="social-youtube" class="social-btn hidden" href="#" target="_blank" rel="noopener" title="YouTube">
+          <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        </a>
+
+        <a id="social-patreon" class="social-btn hidden" href="#" target="_blank" rel="noopener" title="Patreon">
+          <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M15.386.524c-4.764 0-8.641 3.876-8.641 8.64 0 4.75 3.877 8.613 8.641 8.613 4.75 0 8.614-3.864 8.614-8.613C24 4.4 20.136.524 15.386.524zM.003 23.537h4.22V.524H.003z"/></svg>
+        </a>
+
+      </div>
+
+    </div>
+
+    <!-- PLAYER DE MÚSICA -->
+    <div id="music-player" class="hidden">
+      <button id="music-prev" title="Música anterior" class="hidden" style="background:none;border:none;color:inherit;cursor:pointer;padding:0 4px;display:flex;align-items:center;opacity:0.7">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+      </button>
+      <button id="music-toggle" title="Play/Pause">
+        <svg id="icon-play" viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="icon-pause" viewBox="0 0 24 24" fill="currentColor" width="18" height="18" class="hidden"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+      </button>
+      <button id="music-next" title="Próxima música" class="hidden" style="background:none;border:none;color:inherit;cursor:pointer;padding:0 4px;display:flex;align-items:center;opacity:0.7">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M6 18l8.5-6L6 6v12zm2.5-6 8.5 6V6l-8.5 6z M16 6h2v12h-2z"/></svg>
+      </button>
+      <div id="music-info">
+        <span id="music-title">Paradise</span>
+        <span id="music-artist">Unknown</span>
+      </div>
+      <div id="music-bars">
+        <span></span><span></span><span></span><span></span>
+      </div>
+    </div>
+
+    <audio id="bg-audio" loop></audio>
+
+    <!-- ─── BOTÃO ADMIN (oculto — aparece com clique triplo no rodapé) ─── -->
+    <a id="admin-btn" href="admin.html" target="_blank" title="Configurações" style="display:none;">⚙️</a>
+
+    <!-- ─── BARRA DE PESQUISA DE PERFIS ─── -->
+    <div id="search-bar-wrap">
+      <div id="search-bar-inner">
+        <span id="search-icon">🔍</span>
+        <input id="search-input" type="text" placeholder="Buscar perfil..." autocomplete="off" spellcheck="false" />
+        <button id="search-clear" onclick="limparBusca()" style="display:none">✕</button>
+      </div>
+      <div id="search-results"></div>
+    </div>
+
+    <!-- ─── BOTÃO "CRIAR O SEU" ─── -->
+    <a id="create-btn" href="criar.html" title="Criar o seu perfil">
+      <span id="create-btn-icon">✦</span>
+      <span id="create-btn-text">Criar o seu</span>
+    </a>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>⚙️ Painel de Configuração — Paradise Profile</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div id="sidebar-header">
+      <span class="sidebar-logo">🌸</span>
+      <div>
+        <p class="sidebar-title">Paradise Profile</p>
+        <p class="sidebar-sub">Painel de Configuração</p>
+      </div>
+    </div>
+
+    <nav id="sidebar-nav">
+      <button class="nav-item active" data-section="images">
+        <span class="nav-icon">🖼️</span> Imagens
+      </button>
+      <button class="nav-item" data-section="profile">
+        <span class="nav-icon">👤</span> Perfil
+      </button>
+      <button class="nav-item" data-section="socials">
+        <span class="nav-icon">🔗</span> Redes Sociais
+      </button>
+      <button class="nav-item" data-section="audio">
+        <span class="nav-icon">🎵</span> Música
+      </button>
+      <button class="nav-item" data-section="theme">
+        <span class="nav-icon">🎨</span> Cores & Tema
+      </button>
+      <button class="nav-item" data-section="fonts">
+        <span class="nav-icon">🔤</span> Fontes
+      </button>
+      <button class="nav-item" data-section="effects">
+        <span class="nav-icon">✨</span> Efeitos Visuais
+      </button>
+      <button class="nav-item" data-section="ui">
+        <span class="nav-icon">📝</span> Interface
+      </button>
+    </nav>
+
+    <div id="sidebar-footer">
+      <a href="index.html" target="_blank" class="preview-btn">
+        <span>👁️</span> Visualizar Site
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main id="main-content">
+
+    <!-- HEADER -->
+    <header id="top-bar">
+      <button id="menu-toggle" aria-label="Menu">☰</button>
+      <h1 id="section-title">Imagens</h1>
+      <div id="top-actions">
+        <button id="btn-reset" class="btn-secondary" title="Resetar para padrão">↺ Resetar</button>
+        <button id="btn-save" class="btn-primary">💾 Salvar Configurações</button>
+      </div>
+    </header>
+
+    <!-- TOAST -->
+    <div id="toast" class="toast hidden">
+      <span id="toast-icon">✓</span>
+      <span id="toast-msg">Configurações salvas!</span>
+    </div>
+
+    <!-- ══ SEÇÃO: IMAGENS ══════════════════════════════════ -->
+    <section id="section-images" class="config-section active">
+      <div class="section-header">
+        <h2>🖼️ Imagens</h2>
+        <p>Configure as imagens de fundo e as fotos de perfil.</p>
+      </div>
+
+      <div class="cards-grid">
+
+        <div class="config-card">
+          <div class="card-title">Fundo — Tela de Entrada</div>
+          <div class="card-body">
+            <label>URL da imagem</label>
+            <input type="url" id="img-entranceBg" placeholder="https://..." />
+            <div class="preview-img-wrap">
+              <img id="prev-entranceBg" src="" alt="preview" onerror="this.style.display='none'" />
+            </div>
+            <p class="field-hint">Imagem que aparece na tela "click to enter". Recomendado: 1920×1080px.</p>
+          </div>
+        </div>
+
+        <div class="config-card">
+          <div class="card-title">Fundo — Página Principal</div>
+          <div class="card-body">
+            <label>URL da imagem</label>
+            <input type="url" id="img-mainBg" placeholder="https://..." />
+            <div class="preview-img-wrap">
+              <img id="prev-mainBg" src="" alt="preview" onerror="this.style.display='none'" />
+            </div>
+            <p class="field-hint">Fundo do seu perfil. Recomendado: 1920×1080px.</p>
+          </div>
+        </div>
+
+        <div class="config-card">
+          <div class="card-title">Foto de Perfil</div>
+          <div class="card-body">
+            <label>URL da imagem</label>
+            <input type="url" id="img-avatar" placeholder="https://..." />
+            <div class="preview-img-wrap avatar-preview">
+              <img id="prev-avatar" src="" alt="preview" onerror="this.style.display='none'" />
+            </div>
+            <p class="field-hint">Imagem circular no topo do perfil. Recomendado: 200×200px.</p>
+          </div>
+        </div>
+
+        <div class="config-card">
+          <div class="card-title">Foto do Cartão</div>
+          <div class="card-body">
+            <label>URL da imagem</label>
+            <input type="url" id="img-cardAvatar" placeholder="https://..." />
+            <div class="preview-img-wrap avatar-preview">
+              <img id="prev-cardAvatar" src="" alt="preview" onerror="this.style.display='none'" />
+            </div>
+            <p class="field-hint">Foto dentro do cartão de informações. Pode ser igual à foto de perfil.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══ SEÇÃO: PERFIL ══════════════════════════════════ -->
+    <section id="section-profile" class="config-section">
+      <div class="section-header">
+        <h2>👤 Perfil</h2>
+        <p>Defina seu nome, descrição, localização e informações do cartão.</p>
+      </div>
+
+      <div class="cards-grid single-col">
+
+        <div class="config-card">
+          <div class="card-title">Informações Principais</div>
+          <div class="card-body fields-list">
+
+            <div class="field-row">
+              <label for="profile-name">Nome</label>
+              <input type="text" id="profile-name" placeholder="Polly" maxlength="40" />
+            </div>
+
+            <div class="field-row">
+              <label for="profile-description">Descrição / Frase</label>
+              <input type="text" id="profile-description" placeholder="⁺˖ ୨ A piece of paradise ୧˖⁺" maxlength="80" />
+            </div>
+
+            <div class="field-row">
+              <label for="profile-location">Localização</label>
+              <div class="input-with-icon">
+                <span>📍</span>
+                <input type="text" id="profile-location" placeholder="Paradise" maxlength="40" />
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="config-card">
+          <div class="card-title">Cartão de Informações</div>
+          <div class="card-body fields-list">
+
+            <div class="field-row">
+              <label for="card-username">Nome de usuário</label>
+              <input type="text" id="card-username" placeholder="polly.505." maxlength="40" />
+            </div>
+
+            <div class="field-row">
+              <label for="card-status">Status / Frase</label>
+              <input type="text" id="card-status" placeholder="Too tired to be anyone's Athena" maxlength="80" />
+            </div>
+
+            <div class="field-row">
+              <label for="card-icons">Ícones decorativos <small>(separados por espaço)</small></label>
+              <input type="text" id="card-icons" placeholder="🌸 🌿" maxlength="30" />
+              <p class="field-hint">Emojis que aparecem ao lado do nome de usuário no cartão.</p>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══ SEÇÃO: REDES SOCIAIS ══════════════════════════════════ -->
+    <section id="section-socials" class="config-section">
+      <div class="section-header">
+        <h2>🔗 Redes Sociais</h2>
+        <p>Ative, desative e configure os links das suas redes sociais.</p>
+      </div>
+
+      <div class="cards-grid">
+
+        <!-- Spotify -->
+        <div class="config-card social-card">
+          <div class="card-title">
+            <span class="social-tag spotify-tag">Spotify</span>
+            <label class="toggle-wrap">
+              <input type="checkbox" id="social-spotify-enabled" />
+              <span class="toggle"></span>
+            </label>
+          </div>
+          <div class="card-body">
+            <label>URL</label>
+            <input type="url" id="social-spotify-url" placeholder="https://open.spotify.com/..." />
+          </div>
+        </div>
+
+        <!-- Instagram -->
+        <div class="config-card social-card">
+          <div class="card-title">
+            <span class="social-tag instagram-tag">Instagram</span>
+            <label class="toggle-wrap">
+              <input type="checkbox" id="social-instagram-enabled" />
+              <span class="toggle"></span>
+            </label>
+          </div>
+          <div class="card-body">
+            <label>URL</label>
+            <input type="url" id="social-instagram-url" placeholder="https://instagram.com/seuusuario" />
+          </div>
+        </div>
+
+        <!-- Pinterest -->
+        <div class="config-card social-card">
+          <div class="card-title">
+            <span class="social-tag pinterest-tag">Pinterest</span>
+            <label class="toggle-wrap">
+              <input type="checkbox" id="social-pinterest-enabled" />
+              <span class="toggle"></span>
+            </label>
+          </div>
+          <div class="card-body">
+            <label>URL</label>
+            <input type="url" id="social-pinterest-url" placeholder="https://pinterest.com/seuusuario" />
+          </div>
+        </div>
+
+        <!-- TikTok -->
+        <div class="config-card social-card">
+          <div class="card-title">
+            <span class="social-tag tiktok-tag">TikTok</span>
+            <label class="toggle-wrap">
+              <input type="checkbox" id="social-tiktok-enabled" />
+              <span class="toggle"></span>
+            </label>
+          </div>
+          <div class="card-body">
+            <label>URL</label>
+            <input type="url" id="social-tiktok-url" placeholder="https://tiktok.com/@seuusuario" />
+          </div>
+        </div>
+
+        <!-- Twitter/X -->
+        <div class="config-card social-card">
+          <div class="card-title">
+            <span class="social-tag twitter-tag">Twitter / X</span>
+            <label class="toggle-wrap">
+              <input type="checkbox" id="social-twitter-enabled" />
+              <span class="toggle"></span>
+            </label>
+          </div>
+          <div class="card-body">
+            <label>URL</label>
+            <input type="url" id="social-twitter-url" placeholder="https://twitter.com/seuusuario" />
+          </div>
+        </div>
+
+        <!-- YouTube -->
+        <div class="config-card social-card">
+          <div class="card-title">
+            <span class="social-tag youtube-tag">YouTube</span>
+            <label class="toggle-wrap">
+              <input type="checkbox" id="social-youtube-enabled" />
+              <span class="toggle"></span>
+            </label>
+          </div>
+          <div class="card-body">
+            <label>URL</label>
+            <input type="url" id="social-youtube-url" placeholder="https://youtube.com/@seucanal" />
+          </div>
+        </div>
+
+        <!-- Patreon -->
+        <div class="config-card social-card">
+          <div class="card-title">
+            <span class="social-tag patreon-tag">Patreon</span>
+            <label class="toggle-wrap">
+              <input type="checkbox" id="social-patreon-enabled" />
+              <span class="toggle"></span>
+            </label>
+          </div>
+          <div class="card-body">
+            <label>URL</label>
+            <input type="url" id="social-patreon-url" placeholder="https://patreon.com/seuusuario" />
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══ SEÇÃO: MÚSICA ══════════════════════════════════ -->
+    <section id="section-audio" class="config-section">
+      <div class="section-header">
+        <h2>🎵 Música</h2>
+        <p>Configure a música de fundo e o player.</p>
+      </div>
+
+      <div class="cards-grid single-col">
+        <div class="config-card">
+          <div class="card-title">
+            Configurações de Áudio
+            <label class="toggle-wrap">
+              <input type="checkbox" id="audio-enabled" />
+              <span class="toggle"></span>
+            </label>
+          </div>
+          <div class="card-body fields-list">
+
+            <div class="field-row">
+              <label for="audio-url">URL ou caminho do arquivo de música</label>
+              <input type="text" id="audio-url" placeholder="assets/audio/music.mp3 ou https://..." />
+              <p class="field-hint">Coloque o arquivo .mp3 na pasta <code>assets/audio/</code> ou use um link direto.</p>
+            </div>
+
+            <div class="field-row">
+              <label for="audio-title">Nome da música</label>
+              <input type="text" id="audio-title" placeholder="Paradise" maxlength="60" />
+            </div>
+
+            <div class="field-row">
+              <label for="audio-artist">Artista</label>
+              <input type="text" id="audio-artist" placeholder="Unknown" maxlength="60" />
+            </div>
+
+            <div class="field-row">
+              <label for="audio-volume">Volume inicial: <span id="volume-display">40%</span></label>
+              <input type="range" id="audio-volume" min="0" max="100" value="40" class="range-input" />
+            </div>
+
+            <div class="field-row toggles-row">
+              <div class="toggle-field">
+                <label class="toggle-wrap">
+                  <input type="checkbox" id="audio-loop" checked />
+                  <span class="toggle"></span>
+                </label>
+                <span>Repetir música</span>
+              </div>
+              <div class="toggle-field">
+                <label class="toggle-wrap">
+                  <input type="checkbox" id="audio-autoplay" checked />
+                  <span class="toggle"></span>
+                </label>
+                <span>Iniciar automaticamente</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ SEÇÃO: CORES & TEMA ══════════════════════════════════ -->
+    <section id="section-theme" class="config-section">
+      <div class="section-header">
+        <h2>🎨 Cores & Tema</h2>
+        <p>Personalize as cores do seu perfil.</p>
+      </div>
+
+      <div class="cards-grid">
+
+        <div class="config-card">
+          <div class="card-title">Cores Principais</div>
+          <div class="card-body fields-list">
+            <div class="field-row color-row">
+              <label>Cor primária <small>(títulos, destaques)</small></label>
+              <div class="color-input-wrap">
+                <input type="color" id="theme-primary" value="#4a7c59" />
+                <input type="text" id="theme-primary-hex" value="#4a7c59" maxlength="9" class="hex-input" />
+              </div>
+            </div>
+            <div class="field-row color-row">
+              <label>Cor secundária <small>(textos, ícones)</small></label>
+              <div class="color-input-wrap">
+                <input type="color" id="theme-secondary" value="#8faf7e" />
+                <input type="text" id="theme-secondary-hex" value="#8faf7e" maxlength="9" class="hex-input" />
+              </div>
+            </div>
+            <div class="field-row color-row">
+              <label>Cor de destaque / accent</label>
+              <div class="color-input-wrap">
+                <input type="color" id="theme-accent" value="#c9a87c" />
+                <input type="text" id="theme-accent-hex" value="#c9a87c" maxlength="9" class="hex-input" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="config-card">
+          <div class="card-title">Cores do Cartão</div>
+          <div class="card-body fields-list">
+            <div class="field-row">
+              <label for="theme-cardBg">Fundo do cartão <small>(rgba)</small></label>
+              <input type="text" id="theme-cardBg" placeholder="rgba(255, 248, 240, 0.35)" maxlength="40" />
+              <p class="field-hint">Use rgba para controlar a transparência. Ex: rgba(255, 248, 240, 0.35)</p>
+            </div>
+            <div class="field-row">
+              <label for="theme-cardBorder">Borda do cartão <small>(rgba)</small></label>
+              <input type="text" id="theme-cardBorder" placeholder="rgba(201, 168, 124, 0.4)" maxlength="40" />
+            </div>
+            <div class="field-row">
+              <label for="theme-entranceOverlay">Overlay da entrada <small>(rgba)</small></label>
+              <input type="text" id="theme-entranceOverlay" placeholder="rgba(0, 0, 0, 0.55)" maxlength="40" />
+            </div>
+          </div>
+        </div>
+
+        <div class="config-card full-width">
+          <div class="card-title">Temas Prontos</div>
+          <div class="card-body">
+            <div class="presets-grid">
+              <button class="preset-btn" data-preset="paradise">
+                <span class="preset-colors">
+                  <span style="background:#4a7c59"></span>
+                  <span style="background:#8faf7e"></span>
+                  <span style="background:#c9a87c"></span>
+                </span>
+                🌿 Paradise (padrão)
+              </button>
+              <button class="preset-btn" data-preset="rose">
+                <span class="preset-colors">
+                  <span style="background:#9b4f6e"></span>
+                  <span style="background:#d4849f"></span>
+                  <span style="background:#e8b4c0"></span>
+                </span>
+                🌹 Rose Garden
+              </button>
+              <button class="preset-btn" data-preset="lavender">
+                <span class="preset-colors">
+                  <span style="background:#6b5b95"></span>
+                  <span style="background:#a89cc8"></span>
+                  <span style="background:#d4c5e8"></span>
+                </span>
+                💜 Lavender
+              </button>
+              <button class="preset-btn" data-preset="ocean">
+                <span class="preset-colors">
+                  <span style="background:#2e6b8a"></span>
+                  <span style="background:#5fa8c8"></span>
+                  <span style="background:#a8d4e8"></span>
+                </span>
+                🌊 Ocean Blue
+              </button>
+              <button class="preset-btn" data-preset="sakura">
+                <span class="preset-colors">
+                  <span style="background:#c96a8a"></span>
+                  <span style="background:#e8a4b8"></span>
+                  <span style="background:#f5d0dc"></span>
+                </span>
+                🌸 Sakura Pink
+              </button>
+              <button class="preset-btn" data-preset="golden">
+                <span class="preset-colors">
+                  <span style="background:#8b6914"></span>
+                  <span style="background:#c4940a"></span>
+                  <span style="background:#e8c85a"></span>
+                </span>
+                ✨ Golden Hour
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══ SEÇÃO: FONTES ══════════════════════════════════ -->
+    <section id="section-fonts" class="config-section">
+      <div class="section-header">
+        <h2>🔤 Fontes</h2>
+        <p>Escolha as fontes do seu perfil. Devem estar disponíveis no Google Fonts.</p>
+      </div>
+
+      <div class="cards-grid single-col">
+        <div class="config-card">
+          <div class="card-title">Configuração de Fontes</div>
+          <div class="card-body fields-list">
+
+            <div class="field-row">
+              <label for="font-title">Fonte do título / nome</label>
+              <select id="font-title" class="select-input">
+                <option value="Playfair Display">Playfair Display (padrão)</option>
+                <option value="Cormorant Garamond">Cormorant Garamond</option>
+                <option value="EB Garamond">EB Garamond</option>
+                <option value="Libre Baskerville">Libre Baskerville</option>
+                <option value="Merriweather">Merriweather</option>
+                <option value="Cinzel">Cinzel</option>
+                <option value="Great Vibes">Great Vibes</option>
+                <option value="Italiana">Italiana</option>
+              </select>
+              <p class="font-preview" id="preview-title-font">Polly</p>
+            </div>
+
+            <div class="field-row">
+              <label for="font-body">Fonte dos textos</label>
+              <select id="font-body" class="select-input">
+                <option value="Lato">Lato (padrão)</option>
+                <option value="Inter">Inter</option>
+                <option value="Raleway">Raleway</option>
+                <option value="Nunito">Nunito</option>
+                <option value="Poppins">Poppins</option>
+                <option value="Josefin Sans">Josefin Sans</option>
+                <option value="Quicksand">Quicksand</option>
+              </select>
+            </div>
+
+            <div class="field-row">
+              <label for="font-decor">Fonte decorativa</label>
+              <select id="font-decor" class="select-input">
+                <option value="Dancing Script">Dancing Script (padrão)</option>
+                <option value="Pacifico">Pacifico</option>
+                <option value="Sacramento">Sacramento</option>
+                <option value="Petit Formal Script">Petit Formal Script</option>
+                <option value="Great Vibes">Great Vibes</option>
+                <option value="Alex Brush">Alex Brush</option>
+              </select>
+              <p class="font-preview decor" id="preview-decor-font">⁺˖ ୨ A piece of paradise ୧˖⁺</p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ SEÇÃO: EFEITOS VISUAIS ══════════════════════════════════ -->
+    <section id="section-effects" class="config-section">
+      <div class="section-header">
+        <h2>✨ Efeitos Visuais</h2>
+        <p>Ative ou desative os efeitos visuais do perfil.</p>
+      </div>
+
+      <div class="cards-grid single-col">
+        <div class="config-card">
+          <div class="card-title">Efeitos</div>
+          <div class="card-body fields-list">
+
+            <div class="field-row toggles-list">
+
+              <div class="toggle-item">
+                <div class="toggle-info">
+                  <strong>😶‍🌫️ Partículas flutuantes</strong>
+                  <p>Pétalas e flores caindo na tela.</p>
+                </div>
+                <label class="toggle-wrap">
+                  <input type="checkbox" id="effect-particles" checked />
+                  <span class="toggle"></span>
+                </label>
+              </div>
+
+              <div class="toggle-item">
+                <div class="toggle-info">
+                  <strong>Quantidade de partículas</strong>
+                  <p>Número de pétalas na tela: <span id="particle-count-display">18</span></p>
+                </div>
+                <input type="range" id="effect-particleCount" min="5" max="50" value="18" class="range-input small-range" />
+              </div>
+
+              <div class="toggle-item">
+                <div class="toggle-info">
+                  <strong>🌙 Cursor personalizado</strong>
+                  <p>Substitui o cursor padrão por 😶‍🌫️.</p>
+                </div>
+                <label class="toggle-wrap">
+                  <input type="checkbox" id="effect-customCursor" checked />
+                  <span class="toggle"></span>
+                </label>
+              </div>
+
+              <div class="toggle-item">
+                <div class="toggle-info">
+                  <strong>✨ Brilho nos ícones sociais</strong>
+                  <p>Efeito de glow ao passar o mouse.</p>
+                </div>
+                <label class="toggle-wrap">
+                  <input type="checkbox" id="effect-socialGlow" checked />
+                  <span class="toggle"></span>
+                </label>
+              </div>
+
+              <div class="toggle-item">
+                <div class="toggle-info">
+                  <strong>🎬 Animação de entrada</strong>
+                  <p>Fade suave ao carregar o perfil.</p>
+                </div>
+                <label class="toggle-wrap">
+                  <input type="checkbox" id="effect-fadeIn" checked />
+                  <span class="toggle"></span>
+                </label>
+              </div>
+
+            </div>
+
+            <div class="field-row">
+              <label for="effect-entranceBlur">Blur da tela de entrada</label>
+              <div class="input-with-suffix">
+                <input type="number" id="effect-entranceBlur" value="6" min="0" max="30" />
+                <span>px</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ SEÇÃO: INTERFACE ══════════════════════════════════ -->
+    <section id="section-ui" class="config-section">
+      <div class="section-header">
+        <h2>📝 Interface</h2>
+        <p>Configure os textos e elementos da interface.</p>
+      </div>
+
+      <div class="cards-grid single-col">
+        <div class="config-card">
+          <div class="card-title">Textos da Interface</div>
+          <div class="card-body fields-list">
+
+            <div class="field-row">
+              <label for="ui-enterText">Texto da tela de entrada</label>
+              <input type="text" id="ui-enterText" placeholder="click to enter..." maxlength="60" />
+            </div>
+
+            <div class="field-row">
+              <label for="ui-pageTitle">Título da aba do navegador</label>
+              <input type="text" id="ui-pageTitle" placeholder="Polly ♡" maxlength="60" />
+            </div>
+
+            <div class="field-row">
+              <label for="ui-faviconEmoji">Emoji do favicon <small>(aparece na aba)</small></label>
+              <input type="text" id="ui-faviconEmoji" placeholder="😶‍🌫️" maxlength="4" />
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ CÓDIGO GERADO ══════════════════════════════════ -->
+    <section id="section-code" class="config-section">
+      <div class="section-header">
+        <h2>📋 Código Gerado</h2>
+        <p>Aqui aparece o conteúdo atualizado do seu <code>config.js</code> após salvar.</p>
+      </div>
+      <div class="cards-grid single-col">
+        <div class="config-card">
+          <div class="card-title">
+            config.js
+            <button id="copy-code-btn" class="btn-secondary small">📋 Copiar</button>
+          </div>
+          <div class="card-body">
+            <textarea id="generated-code" readonly rows="30" class="code-textarea"></textarea>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="config.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

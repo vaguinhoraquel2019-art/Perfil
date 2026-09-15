@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>⚙️ Minha Conta</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet" />
+  <script src="js/protect.js"></script>
+  <link rel="stylesheet" href="minha-conta.css" />
+</head>
+<body>
+
+<!-- ══════════════════ LOGIN ══════════════════ -->
+<div id="login-screen">
+  <div class="mc-card">
+    <div class="mc-logo">⚙️</div>
+    <h1 class="mc-title">Minha Conta</h1>
+    <p class="mc-sub">Entre para editar seu perfil</p>
+
+    <div class="mc-form">
+      <div class="mc-field">
+        <label>Usuário</label>
+        <input type="text" id="login-user" placeholder="Seu usuário" autocomplete="off" />
+      </div>
+      <div class="mc-field">
+        <label>Senha</label>
+        <input type="password" id="login-pass" placeholder="••••••••" />
+      </div>
+      <div id="login-error" class="mc-error" style="display:none">Usuário ou senha incorretos.</div>
+      <button class="btn-primary" onclick="doLogin()">Entrar</button>
+      <a href="criar.html" class="mc-link">Ainda não tem perfil? Criar agora</a>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ PAINEL DO USUÁRIO ══════════════════ -->
+<div id="user-panel" style="display:none">
+
+  <header class="uc-header">
+    <div class="uc-header-left">
+      <span class="uc-logo">⚙️</span>
+      <div>
+        <div class="uc-title">Minha Conta</div>
+        <div id="uc-username" class="uc-sub"></div>
+      </div>
+    </div>
+    <div class="uc-header-right">
+      <a id="uc-view-btn" href="#" target="_blank" class="btn-outline">👁 Ver meu perfil</a>
+      <button class="btn-danger" onclick="doLogout()">Sair</button>
+    </div>
+  </header>
+
+  <div class="uc-body">
+
+    <!-- Abas -->
+    <div class="uc-tabs">
+      <button class="uc-tab active" data-tab="perfil"    onclick="goTab('perfil')">👤 Perfil</button>
+      <button class="uc-tab"        data-tab="aparencia" onclick="goTab('aparencia')">🎨 Aparência</button>
+      <button class="uc-tab"        data-tab="sociais"   onclick="goTab('sociais')">🔗 Redes Sociais</button>
+      <button class="uc-tab"        data-tab="musica"    onclick="goTab('musica')">🎵 Música</button>
+      <button class="uc-tab"        data-tab="senha"     onclick="goTab('senha')">🔐 Senha</button>
+      <button class="uc-tab"        data-tab="loja"      onclick="goTab('loja')">🛒 Loja</button>
+      <button class="uc-tab"        data-tab="stories"   onclick="goTab('stories')">✦ Stories</button>
+    </div>
+
+    <!-- ── ABA PERFIL ── -->
+    <div id="tab-perfil" class="uc-tab-content active">
+      <div class="form-grid">
+        <div class="ff">
+          <label>Nome</label>
+          <input type="text" id="e-name" maxlength="30" placeholder="Seu nome" />
+        </div>
+        <div class="ff">
+          <label>Usuário do cartão</label>
+          <input type="text" id="e-username" maxlength="30" placeholder="usuario.123" />
+        </div>
+        <div class="ff full">
+          <label>Frase / descrição</label>
+          <input type="text" id="e-desc" maxlength="80" placeholder="⁺˖ ୨ sua frase ୧˖⁺" />
+        </div>
+        <div class="ff full">
+          <label>Status do cartão</label>
+          <input type="text" id="e-status" maxlength="100" placeholder="sua frase de status" />
+        </div>
+        <div class="ff">
+          <label>Localização</label>
+          <input type="text" id="e-location" maxlength="30" placeholder="Sua cidade" />
+        </div>
+        <div class="ff">
+          <label>Título da aba</label>
+          <input type="text" id="e-title" maxlength="40" placeholder="Nome ♡" />
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ABA APARÊNCIA ── -->
+    <div id="tab-aparencia" class="uc-tab-content">
+      <div class="form-grid">
+        <div class="ff full">
+          <label>Foto de perfil (URL)</label>
+          <input type="url" id="e-avatar" placeholder="https://..." oninput="previewImg('e-avatar','prev-avatar')" />
+          <div class="img-prev-wrap">
+            <div id="prev-avatar" class="img-prev avatar-prev">
+              <span>👤</span>
+            </div>
+          </div>
+        </div>
+        <div class="ff full">
+          <label>Fundo da página principal (URL)</label>
+          <input type="url" id="e-mainbg" placeholder="https://..." oninput="previewImg('e-mainbg','prev-mainbg')" />
+          <div class="img-prev-wrap">
+            <div id="prev-mainbg" class="img-prev">
+              <span>🌿</span>
+            </div>
+          </div>
+        </div>
+        <div class="ff full">
+          <label>Fundo da tela de entrada (URL) <span class="opt">opcional</span></label>
+          <input type="url" id="e-entrancebg" placeholder="https://... (deixe vazio para usar o mesmo fundo)" />
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ABA REDES SOCIAIS ── -->
+    <div id="tab-sociais" class="uc-tab-content">
+      <div class="form-grid">
+        <div class="ff">
+          <label><span class="dot" style="background:#1db954"></span>Spotify</label>
+          <input type="url" id="e-spotify" placeholder="https://open.spotify.com/..." />
+        </div>
+        <div class="ff">
+          <label><span class="dot" style="background:#e1306c"></span>Instagram</label>
+          <input type="url" id="e-instagram" placeholder="https://instagram.com/..." />
+        </div>
+        <div class="ff">
+          <label><span class="dot" style="background:#69c9d0"></span>TikTok</label>
+          <input type="url" id="e-tiktok" placeholder="https://tiktok.com/@..." />
+        </div>
+        <div class="ff">
+          <label><span class="dot" style="background:#e60023"></span>Pinterest</label>
+          <input type="url" id="e-pinterest" placeholder="https://pinterest.com/..." />
+        </div>
+        <div class="ff">
+          <label><span class="dot" style="background:#1da1f2"></span>Twitter / X</label>
+          <input type="url" id="e-twitter" placeholder="https://twitter.com/..." />
+        </div>
+        <div class="ff">
+          <label><span class="dot" style="background:#ff0000"></span>YouTube</label>
+          <input type="url" id="e-youtube" placeholder="https://youtube.com/..." />
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ABA MÚSICA ── -->
+    <div id="tab-musica" class="uc-tab-content">
+      <div id="music-slots-container">
+        <!-- Slots gerados dinamicamente pelo JS -->
+      </div>
+      <p style="font-size:12px;color:rgba(255,255,255,0.25);margin-top:12px">
+        💡 Quer mais slots de música? Adquira na aba <strong>🛒 Loja</strong>.
+      </p>
+    </div>
+
+    <!-- ── ABA SENHA ── -->
+    <div id="tab-senha" class="uc-tab-content">
+      <div class="form-grid" style="max-width:400px">
+        <div class="ff full">
+          <label>Senha atual</label>
+          <input type="password" id="e-pass-atual" placeholder="••••••••" />
+        </div>
+        <div class="ff full">
+          <label>Nova senha</label>
+          <input type="password" id="e-pass-nova" placeholder="••••••••" />
+        </div>
+        <div class="ff full">
+          <label>Confirmar nova senha</label>
+          <input type="password" id="e-pass-conf" placeholder="••••••••" />
+        </div>
+        <div class="ff full">
+          <button class="btn-primary" onclick="changePassword()" style="width:100%">🔐 Alterar senha</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ABA LOJA ── -->
+    <div id="tab-loja" class="uc-tab-content">
+      <div id="loja-grid" style="padding:4px 0"></div>
+      <div id="loja-empty" style="display:none;text-align:center;padding:48px 0;color:rgba(255,255,255,0.3)">
+        <div style="font-size:44px;margin-bottom:12px">🛒</div>
+        <p style="font-size:14px">Nenhum produto disponível no momento.</p>
+        <p style="font-size:12px;margin-top:6px;color:rgba(255,255,255,0.18)">Novos produtos serão adicionados em breve.</p>
+      </div>
+      <div id="loja-compras" style="margin-top:28px"></div>
+    </div>
+
+    <!-- ── ABA STORIES ── -->
+    <div id="tab-stories" class="uc-tab-content">
+
+      <!-- Botão criar novo -->
+      <div style="margin-bottom:20px">
+        <a href="story-editor.html" style="
+          display:inline-flex;align-items:center;gap:8px;
+          padding:11px 20px;
+          background:rgba(255,255,255,0.08);
+          border:1px solid rgba(255,255,255,0.12);
+          border-radius:12px;
+          color:#e8eaf0;
+          font-size:13px;font-weight:600;
+          text-decoration:none;
+          transition:background 0.15s;
+        " onmouseover="this.style.background='rgba(255,255,255,0.12)'"
+           onmouseout="this.style.background='rgba(255,255,255,0.08)'">
+          <span style="font-size:18px">+</span> Criar novo Story
+        </a>
+      </div>
+
+      <!-- Lista de stories ativos -->
+      <div id="stories-list-mc" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px"></div>
+      <div id="stories-empty-mc" style="display:none;text-align:center;padding:40px 0;color:rgba(255,255,255,0.3)">
+        <div style="font-size:40px;margin-bottom:10px">✦</div>
+        <p style="font-size:14px">Você ainda não tem stories.</p>
+        <p style="font-size:12px;margin-top:6px;color:rgba(255,255,255,0.18)">Crie o primeiro agora!</p>
+      </div>
+
+    </div>
+
+    <!-- Rodapé de salvar -->
+    <div class="uc-footer" id="uc-footer">
+      <button class="btn-primary" onclick="saveProfile()">💾 Salvar alterações</button>
+      <span id="save-status" class="save-status"></span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════ ABA LOJA (injetada dinamicamente) ══════════════════ -->
+<!-- O conteúdo é gerado pelo JS em renderLoja() -->
+
+<!-- ══════════════════ MODAL DE COMPRA / PIX ══════════════════ -->
+<div id="modal-compra" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.75);display:none;align-items:center;justify-content:center;padding:20px">
+  <div style="background:#13151f;border:1px solid rgba(255,255,255,0.1);border-radius:16px;max-width:420px;width:100%;padding:28px 24px;position:relative;text-align:center;font-family:'Inter',sans-serif">
+    <button onclick="fecharModalCompra()" style="position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(255,255,255,0.4);font-size:20px;cursor:pointer;line-height:1">✕</button>
+
+    <div style="font-size:32px;margin-bottom:8px">💳</div>
+    <h2 id="mc-prod-nome" style="color:#e8eaf0;font-size:18px;margin-bottom:4px"></h2>
+    <div id="mc-prod-preco" style="font-size:22px;font-weight:700;color:#7ecfa0;margin-bottom:20px"></div>
+
+    <!-- QR Code -->
+    <div style="background:#fff;border-radius:12px;padding:12px;display:inline-block;margin-bottom:16px">
+      <div id="mc-qrcode"></div>
+    </div>
+
+    <!-- Chave Pix -->
+    <div style="background:#0f1118;border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:8px;justify-content:space-between">
+      <span style="font-size:12px;color:#9ba3bc;flex:1;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">wagnerricarte4@gmail.com</span>
+      <button onclick="copiarPix()" style="background:rgba(126,207,160,0.15);border:1px solid rgba(126,207,160,0.3);color:#7ecfa0;border-radius:6px;padding:4px 12px;font-size:11px;cursor:pointer;font-family:inherit;white-space:nowrap">📋 Copiar</button>
+    </div>
+
+    <!-- Aviso 24h -->
+    <div style="background:rgba(201,168,124,0.12);border:1px solid rgba(201,168,124,0.3);border-radius:10px;padding:12px 16px;margin-bottom:16px">
+      <p style="color:#c9a87c;font-size:13px;font-weight:600;line-height:1.5;margin:0">⏳ APÓS O PAGAMENTO AGUARDE ATÉ 24H PARA ESTAR RECEBENDO O SEU PRODUTO.</p>
+    </div>
+
+    <button onclick="confirmarPedido()" style="width:100%;padding:13px;background:linear-gradient(135deg,#4a7c59,#7ecfa0);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">
+      ✅ Já realizei o pagamento
+    </button>
+    <p style="color:rgba(255,255,255,0.2);font-size:11px;margin-top:10px">Após clicar, sua compra ficará em análise até ser aprovada.</p>
+  </div>
+</div>
+
+<!-- Áudio de notificação -->
+<audio id="voice-audio" preload="auto" style="display:none">
+  <source src="assets/audio/voice-message.mp3" type="audio/mpeg" />
+  <source src="assets/audio/voice-message.ogg" type="audio/ogg" />
+  <source src="assets/audio/voice-message.wav" type="audio/wav" />
+</audio>
+
+<!-- Toast -->
+<div id="toast" class="mc-toast" style="display:none"></div>
+
+<script src="admin-data.js"></script>
+<script src="config.js"></script>
+<!-- Biblioteca QR Code -->
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="minha-conta.js"></script>
+</body>
+</html>
