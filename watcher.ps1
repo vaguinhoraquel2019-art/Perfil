@@ -22,7 +22,8 @@ Write-Host "  Rodando... Ctrl+C para parar"
 Write-Host ""
 
 while ($true) {
-    $status = & $git status --porcelain 2>$null
+    # Ignora arquivos deletados — só conta modificados/novos
+    $status = & $git status --porcelain 2>$null | Where-Object { $_ -match '^(\?\?|M| M|A| A)' }
     if ($status) {
         Write-Host "  [$(Get-Date -Format 'HH:mm:ss')] Mudancas detectadas..."
         
@@ -34,13 +35,17 @@ while ($true) {
         if ($staged) {
             $data = Get-Date -Format "dd/MM/yyyy HH:mm"
             & $git commit -m "auto: $data"
-            & $git push --force $url main
+            # Pull primeiro para nao sobrescrever o que a API do GitHub escreveu
+            & $git pull --rebase $url main 2>$null
+            & $git push $url main
             if ($LASTEXITCODE -eq 0) {
                 Write-Host "  [$(Get-Date -Format 'HH:mm:ss')] OK - Site atualizado!"
             } else {
                 Write-Host "  [$(Get-Date -Format 'HH:mm:ss')] Erro no push."
             }
             Write-Host ""
+        } else {
+            Write-Host "  [$(Get-Date -Format 'HH:mm:ss')] Nada para enviar (arquivos ja atualizados)."
         }
     }
     Start-Sleep -Seconds 8
