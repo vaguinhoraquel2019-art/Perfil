@@ -762,10 +762,11 @@
       buscarPerfis(q);
     });
 
-    // Fecha ao clicar fora
-    document.addEventListener("click", e => {
-      if (!document.getElementById("search-bar-wrap").contains(e.target)) {
-        results.style.display = "none";
+    // Fecha ao clicar fora — usa mousedown para não interferir no clique dos resultados
+    document.addEventListener("mousedown", e => {
+      const wrap = document.getElementById("search-bar-wrap");
+      if (wrap && !wrap.contains(e.target)) {
+        if (results) results.style.display = "none";
       }
     });
   }
@@ -790,15 +791,15 @@
   async function carregarPerfisRemotos() {
     const now = Date.now();
     if (_profilesCache && (now - _profilesCacheTime) < PROFILES_CACHE_TTL) {
-      return _profilesCache;
+      return [..._profilesCache];
     }
     try {
-      const res = await fetch(PROFILES_DB_URL + "?t=" + now);
+      const res = await fetch(PROFILES_DB_URL + "?t=" + now, { cache: "no-store" });
       if (!res.ok) throw new Error("HTTP " + res.status);
       const json = await res.json();
       _profilesCache = json.profiles || [];
       _profilesCacheTime = now;
-      return _profilesCache;
+      return [..._profilesCache];
     } catch(e) {
       // fallback: localStorage
       try {
