@@ -15,17 +15,17 @@ const CONFIG = {
   images: {
     // Fundo da tela de entrada (click to enter)
     // Troque por uma imagem sua — coloque em assets/images/ ou use URL direta
-    entranceBg: "https://cdn.discordapp.com/attachments/1519432914109071492/1549103856523284540/wagner.png?ex=6aa97ae4&is=6aa82964&hm=d51310f35737f1dceee41a8cc2f2db02f997ff7a92d7ccace88dcdc923bd76ff",
+    entranceBg: "https://cdn.discordapp.com/attachments/1519432914109071492/1549103856523284540/wagner.png?ex=6aac1de4&is=6aaacc64&hm=34cbed59c7934a591484a8faf480a65a339bdff1a79eff6bc3472ad6c224c8f8",
 
     // Fundo da página principal
     // Troque pelo jardim/fundo que preferir
-    mainBg: "https://cdn.discordapp.com/attachments/1519432914109071492/1549103856523284540/wagner.png?ex=6aa97ae4&is=6aa82964&hm=d51310f35737f1dceee41a8cc2f2db02f997ff7a92d7ccace88dcdc923bd76ff",
+    mainBg: "https://cdn.discordapp.com/attachments/1519432914109071492/1549103856523284540/wagner.png?ex=6aac1de4&is=6aaacc64&hm=34cbed59c7934a591484a8faf480a65a339bdff1a79eff6bc3472ad6c224c8f8",
 
     // Foto de perfil — troque pela sua foto
-    avatar: "https://cdn.discordapp.com/attachments/1519432914109071492/1549103792564342924/IMG_20260903_112843_207.jpg?ex=6aa97ad5&is=6aa82955&hm=baf7ad6661806d64b22ee6808883a10662bf7c8c8422b863169838ae1d690689",
+    avatar: "https://cdn.discordapp.com/attachments/1519432914109071492/1549103792564342924/IMG_20260903_112843_207.jpg?ex=6aac1dd5&is=6aaacc55&hm=689d841916b44a306e21cf5034a860ce2a36c4d59c96f722eee5ed58d8b324b8",
 
     // Imagem dentro do cartão (pode ser igual ao avatar ou diferente)
-    cardAvatar: "https://cdn.discordapp.com/attachments/1519432914109071492/1549103792564342924/IMG_20260903_112843_207.jpg?ex=6aa97ad5&is=6aa82955&hm=baf7ad6661806d64b22ee6808883a10662bf7c8c8422b863169838ae1d690689",
+    cardAvatar: "https://cdn.discordapp.com/attachments/1519432914109071492/1549103792564342924/IMG_20260903_112843_207.jpg?ex=6aac1dd5&is=6aaacc55&hm=689d841916b44a306e21cf5034a860ce2a36c4d59c96f722eee5ed58d8b324b8",
   },
 
   // ──────────────────────────────────────────────
