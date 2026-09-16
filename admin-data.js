@@ -469,3 +469,70 @@ async function pushOrderToGitHub(order) {
     saveAdminData();
   } catch(e) {}
 }
+
+// ══════════════════════════════════════════════════════════════
+// PERFIS CENTRALIZADOS — profiles-db.json no GitHub
+// ══════════════════════════════════════════════════════════════
+
+const PROFILES_API_URL = "https://api.github.com/repos/vaguinhoraquel2019-art/Perfil/contents/profiles-db.json";
+
+// Envia um perfil para o profiles-db.json via GitHub API
+async function pushProfileToGitHub(entry) {
+  const token = _ghToken();
+  if (!token) return;
+  try {
+    const headers = {
+      "Authorization": "token " + token,
+      "Accept": "application/vnd.github+json",
+      "Content-Type": "application/json",
+    };
+    const getRes  = await fetch(PROFILES_API_URL + "?ref=main", { headers });
+    const getData = await getRes.json();
+    const sha     = getData.sha;
+    const current = JSON.parse(atob(getData.content.replace(/\n/g, "")));
+    const profiles = current.profiles || [];
+    const idx = profiles.findIndex(p => p.id === entry.id);
+    if (idx >= 0) { profiles[idx] = entry; } else { profiles.push(entry); }
+    const newContent = JSON.stringify({ profiles }, null, 2);
+    await fetch(PROFILES_API_URL, {
+      method: "PUT", headers,
+      body: JSON.stringify({
+        message: "perfil: " + entry.id,
+        content: btoa(unescape(encodeURIComponent(newContent))),
+        sha, branch: "main",
+      }),
+    });
+  } catch(e) {}
+}
+
+// Ao carregar, sincroniza perfis locais que ainda não estão no banco central
+async function syncLocalProfilestoGitHub() {
+  const token = _ghToken();
+  if (!token) return;
+  try {
+    // Lê banco remoto
+    const res = await fetch("https://raw.githubusercontent.com/vaguinhoraquel2019-art/Perfil/main/profiles-db.json?t=" + Date.now(), { cache: "no-store" });
+    if (!res.ok) return;
+    const remote = await res.json();
+    const remoteIds = (remote.profiles || []).map(p => p.id);
+
+    // Pega perfis locais que não estão no remoto
+    const localData = localStorage.getItem("paradise_admin_data");
+    if (!localData) return;
+    const local = JSON.parse(localData);
+    const localProfiles = local.profiles || [];
+    const novos = localProfiles.filter(p => p.id && !remoteIds.includes(p.id));
+
+    // Envia um por um
+    for (const p of novos) {
+      await pushProfileToGitHub(p);
+    }
+  } catch(e) {}
+}
+
+// Roda automaticamente após 3 segundos do carregamento da página
+if (typeof window !== "undefined") {
+  window.addEventListener("load", () => {
+    setTimeout(syncLocalProfilestoGitHub, 3000);
+  });
+}
