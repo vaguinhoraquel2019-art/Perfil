@@ -759,7 +759,7 @@
       const q = input.value.trim().toLowerCase();
       clearBtn.style.display = q ? "" : "none";
       if (!q) { results.style.display = "none"; return; }
-      buscarPerfis(q);
+      buscarPerfis(q).catch(() => {});
     });
 
     // Fecha ao clicar fora — usa mousedown para não interferir no clique dos resultados
