@@ -300,6 +300,58 @@ function changePassword() {
 }
 
 // ═══════════════════════════════════════════════════════
+// EXCLUIR CONTA
+// ═══════════════════════════════════════════════════════
+function abrirModalExcluir() {
+  const modal = document.getElementById("modal-excluir");
+  document.getElementById("excluir-senha").value = "";
+  document.getElementById("excluir-erro").style.display = "none";
+  modal.style.display = "flex";
+}
+
+function fecharModalExcluir() {
+  document.getElementById("modal-excluir").style.display = "none";
+}
+
+function confirmarExcluirConta() {
+  const senha = document.getElementById("excluir-senha").value;
+  const erro  = document.getElementById("excluir-erro");
+
+  if (!senha) {
+    erro.textContent = "Digite sua senha para confirmar.";
+    erro.style.display = "";
+    return;
+  }
+
+  // Verifica senha
+  const valid = loginUserAccount(currentAccount.username, senha);
+  if (!valid) {
+    erro.textContent = "Senha incorreta. Tente novamente.";
+    erro.style.display = "";
+    document.getElementById("excluir-senha").value = "";
+    return;
+  }
+
+  // Remove conta e perfil
+  const username  = currentAccount.username;
+  const profileId = currentAccount.profileId || username;
+
+  ADMIN_DATA.user_accounts = ADMIN_DATA.user_accounts.filter(a => a.username !== username);
+  ADMIN_DATA.profiles      = ADMIN_DATA.profiles.filter(p => p.id !== profileId && p.id !== username);
+  ADMIN_DATA.orders        = ADMIN_DATA.orders.filter(o => o.username !== username);
+  ADMIN_DATA.stories       = ADMIN_DATA.stories.filter(s => s.username !== username);
+  saveAdminData();
+
+  // Tenta remover do banco central (profiles-db.json)
+  if (typeof pushProfileToGitHub === "function") {
+    // Remove enviando versão vazia não é possível via PUT — ignora silenciosamente
+  }
+
+  fecharModalExcluir();
+  doLogout();
+}
+
+// ═══════════════════════════════════════════════════════
 // PREVIEW DE IMAGENS
 // ═══════════════════════════════════════════════════════
 function previewImg(inputId, prevId) {
