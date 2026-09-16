@@ -813,34 +813,32 @@
     }
   }
 
-  function buscarPerfis(query) {
+  async function buscarPerfis(query) {
     const results = document.getElementById("search-results");
+    if (!results) return;
 
-    // Mostra loading enquanto busca
-    results.innerHTML = `<div class="search-no-result" style="opacity:0.5">Buscando...</div>`;
+    results.innerHTML = `<div class="search-no-result" style="opacity:0.5">🔍 Buscando...</div>`;
     results.style.display = "";
 
-    carregarPerfisRemotos().then(profiles => {
+    // Carrega perfis remotos
+    let profiles = await carregarPerfisRemotos();
 
-    // Mescla com localStorage (perfis locais que ainda não foram ao servidor)
+    // Mescla com localStorage
     try {
       const saved = localStorage.getItem("paradise_admin_data");
       if (saved) {
-        const parsed = JSON.parse(saved);
-        const localProfiles = parsed.profiles || [];
+        const localProfiles = JSON.parse(saved).profiles || [];
         localProfiles.forEach(lp => {
-          if (!profiles.find(rp => rp.id === lp.id)) {
-            profiles.push(lp);
-          }
+          if (!profiles.find(rp => rp.id === lp.id)) profiles.push(lp);
         });
       }
     } catch(e) {}
 
-    // Filtra por username ou nome
-    const q = query.toLowerCase();
+    // Filtra
+    const q = query.toLowerCase().replace(/^@/, "");
     const matches = profiles.filter(p => {
       const name = (p.name     || "").toLowerCase();
-      const user = (p.username || "").toLowerCase().replace(/^@/,"");
+      const user = (p.username || "").toLowerCase().replace(/^@/, "");
       return name.includes(q) || user.includes(q);
     }).slice(0, 8);
 
@@ -859,25 +857,23 @@
 
       // Monta URL do perfil
       const base   = window.location.origin + window.location.pathname;
-      const params = new URLSearchParams({
-        name:      d.name      || p.name,
-        username:  d.username  || p.username,
-        desc:      d.desc      || "",
-        status:    d.status    || "",
-        location:  d.location  || "",
-        title:     d.title     || d.name || p.name,
-        avatar:    d.avatar    || "",
-        mainbg:    d.mainbg    || "",
-        entrancebg:d.entrancebg|| d.mainbg || "",
-        spotify:   d.spotify   || "",
-        instagram: d.instagram || "",
-        tiktok:    d.tiktok    || "",
-        audio:     d.audio     || "",
-        audioTitle: d.audioTitle || "",
-        audioArtist: d.audioArtist || "",
-      });
-      // Remove parâmetros vazios
-      [...params.keys()].forEach(k => { if (!params.get(k)) params.delete(k); });
+      const params = new URLSearchParams();
+      const set = (k, v) => { if (v) params.set(k, v); };
+      set("name",        d.name        || p.name);
+      set("username",    d.username    || p.username);
+      set("desc",        d.desc        || "");
+      set("status",      d.status      || "");
+      set("location",    d.location    || "");
+      set("title",       d.title       || d.name || p.name);
+      set("avatar",      d.avatar      || "");
+      set("mainbg",      d.mainbg      || "");
+      set("entrancebg",  d.entrancebg  || d.mainbg || "");
+      set("spotify",     d.spotify     || "");
+      set("instagram",   d.instagram   || "");
+      set("tiktok",      d.tiktok      || "");
+      set("audio",       d.audio       || "");
+      set("audioTitle",  d.audioTitle  || "");
+      set("audioArtist", d.audioArtist || "");
       item.href = base + "?" + params.toString();
 
       // Avatar
@@ -891,7 +887,7 @@
       info.className = "sri-info";
       info.innerHTML = `
         <div class="sri-name">${escSearch(p.name || d.name || "Sem nome")}</div>
-        <div class="sri-username">@${escSearch(p.username || d.username || "")}</div>
+        <div class="sri-username">@${escSearch((p.username || d.username || "").replace(/^@/,""))}</div>
       `;
 
       item.appendChild(avatar);
@@ -900,7 +896,6 @@
     });
 
     results.style.display = "";
-    }); // fim carregarPerfisRemotos().then
   }
 
   function escSearch(s) {
