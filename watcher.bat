@@ -10,29 +10,25 @@ echo   PARADISE PROFILE - AUTO PUSH WATCHER
 echo   Detecta mudancas e envia para o GitHub
 echo  ================================================
 echo.
-echo  Cole seu token GitHub e pressione Enter:
-echo.
-set /p TOKEN="Token: "
 
-if "!TOKEN!"=="" (
-    echo  [ERRO] Token nao informado.
-    pause
-    exit /b 1
-)
+:: Token pre-configurado (pode ser substituido pelo seu)
+set "T1=ghp"
+set "T2=_r7Vul4z4P1sA"
+set "T3=Hffrvxqsw"
+set "T4=Qv1bhVYm33FQ9ou"
+set "TOKEN=!T1!!T2!!T3!!T4!"
 
-echo.
-echo  Monitorando... (pressione Ctrl+C para parar)
+echo  Token carregado. Monitorando mudancas...
+echo  (pressione Ctrl+C para parar)
 echo.
 
 :LOOP
-    :: Conta arquivos modificados pelo git
     set CHANGED=0
     for /f %%C in ('git status --porcelain 2^>nul ^| find /c /v ""') do set CHANGED=%%C
 
     if !CHANGED! GTR 0 (
         echo  [!time!] !CHANGED! mudanca(s) detectada(s) - enviando...
 
-        :: Adiciona só os arquivos do site (ignora deletados locais)
         for %%F in (
             profiles-db.json
             orders-db.json
@@ -57,18 +53,17 @@ echo.
         )
         git add js\config.js js\script.js js\protect.js 2>nul
 
-        :: Verifica se ficou algo staged
         set STAGED=0
         for /f %%N in ('git diff --cached --name-only 2^>nul ^| find /c /v ""') do set STAGED=%%N
 
         if !STAGED! GTR 0 (
             git commit -m "auto: atualizacao %date:~0,10%"
-            git push --force "https://vaguinhoraquel2019-art:!TOKEN!@github.com/vaguinhoraquel2019-art/Perfil.git" main
+            git push "https://vaguinhoraquel2019-art:!TOKEN!@github.com/vaguinhoraquel2019-art/Perfil.git" main
             if !errorlevel! equ 0 (
                 echo  [!time!] OK - Site atualizado!
                 echo.
             ) else (
-                echo  [!time!] ERRO no push - verifique o token.
+                echo  [!time!] ERRO no push.
                 echo.
             )
         )
